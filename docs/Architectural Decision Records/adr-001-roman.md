@@ -1,5 +1,12 @@
 # ADR-001: Choice of Programming Language and libraries for Blockchain Implementation
 
+## Status
+
+<!--- Proposed | Accepted | Deprecated | Declined | Superseded --->
+
+Proposed 💡(in review)
+
+
 ## Context
 
 Our team is working on implementing a simple blockchain to explore the basic components and concepts of blockchain technology. The primary goal is to build a functional prototype quickly and effectively.
