@@ -18,18 +18,26 @@ After evaluating different programming languages, the proposed decision is to us
 
 ## Consideration of Alternative Languages
 
-While JavaScript is an excellent choice for simplicity and rapid prototyping, we have also considered **Rust** and **C++** as alternative languages for implementing the blockchain. Both Rust and C++ offer high performance, low-level control, and enhanced security, making them ideal choices for blockchain projects with stringent performance and security requirements.
+While JavaScript is an excellent choice for simplicity and rapid prototyping, we have also considered the following alternative languages for implementing the blockchain:
 
-**Rust** stands out for its focus on safety, memory safety guarantees, and zero-cost abstractions. It offers strong support for concurrent programming, which is valuable in blockchain applications with multiple nodes and transactions.
 
-**C++** provides efficient memory management and extensive libraries, allowing for fine-tuning performance-critical components in the blockchain application.
+1. **Rust**: Rust stands out for its focus on safety, memory safety guarantees, and zero-cost abstractions. It offers strong support for concurrent programming, which is valuable in blockchain applications with multiple nodes and transactions.
 
-However, we have decided to proceed with JavaScript due to its ease of use, quick prototyping capabilities, and our project's focus on simplicity and exploration of blockchain concepts.
+2. **C++**: C++ provides efficient memory management and extensive libraries, allowing for fine-tuning performance-critical components in the blockchain application.
+
+3. **Kotlin**: Kotlin is a modern, expressive language that runs on the Java Virtual Machine (JVM). It offers compatibility with Java libraries and strong support for concurrent programming through coroutines. Kotlin is a good option for high-performance blockchain implementations.
+
+4. **Golang**: Golang (Go) is known for its simplicity, efficiency, and built-in support for concurrent programming with goroutines. It offers excellent performance and is a compelling choice for blockchain projects that require concurrency and performance optimization.
+
+
+However, after careful consideration, we have decided to proceed with JavaScript due to its ease of use, quick prototyping capabilities, and our project's focus on simplicity and exploration of blockchain concepts.
+
 
 ## Consequences
 
-By choosing JavaScript, we prioritize quick development and simplicity, enabling us to build a functional prototype of the blockchain efficiently. However, we may experience some performance limitations compared to low-level languages like Rust or C++. If the project requires scalability and performance improvements, we may consider optimizing performance-critical parts of the blockchain with Rust or C++ modules while retaining the overall application logic in JavaScript.
+By choosing JavaScript, we prioritize quick development and simplicity, enabling us to build a functional prototype of the blockchain efficiently. However, we may experience some performance limitations compared to low-level languages like Rust, C++, Kotlin, or Golang.
 
+If the project requires scalability, high performance, and security improvements, we may consider optimizing performance-critical parts of the blockchain with Rust, C++, Kotlin, or Golang modules while retaining the overall application logic in JavaScript.
 
 ## Libraries Used
 
@@ -39,7 +47,6 @@ The following JavaScript libraries will be used for implementing the simple bloc
 2. **express**: To create an HTTP server for blockchain interaction.
 3. **body-parser**: For parsing JSON data in HTTP requests.
 4. **uuid**: To generate unique identifiers for transactions and blocks.
-
 
 When UI interface is required, we will use the following libraries:
 
@@ -53,4 +60,4 @@ When UI interface is required, we will use the following libraries:
 
 It is essential to conduct thorough testing and security audits of the blockchain implementation to ensure its stability and security. The choice of language does not affect the rigorous testing and security practices that we will adhere to during the development process.
 
-For detailed descriptions of Rust and C++ as alternative languages, please refer to the sections on "Consideration of Alternative Languages" in the project documentation.
+For detailed descriptions of Rust, C++, Kotlin, and Golang as alternative languages, please refer to the sections on "Consideration of Alternative Languages" in the project documentation.
