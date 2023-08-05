@@ -4,7 +4,7 @@
 
 <!--- Proposed | Accepted | Deprecated | Declined | Superseded --->
 
-Proposed 💡(in review)
+Accepted ✔️
 
 
 ## Context
