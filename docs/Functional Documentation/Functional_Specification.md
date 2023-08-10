@@ -47,9 +47,39 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 
 1. **Functional Description**
 
-1.a. Cryptography
+1.1. Cryptography
 
-1.b. Blocks
+1.2. Blocks
+
+1.2.a. "Block" class.
+
+  Modules called:
+    - a JSON encoder module
+    - a module that provides a hash function:
+      .) encode string to UTF-8
+      .) hash object
+      .) encode to base64
+      .) decode to UTF-8
+      
+  Attributes:
+    - Hash from previous block (binary string)
+    - Transactions 
+    - Nonce
+
+  Methods: 
+    - Get Dictionary
+      .) Input: acts on Block
+      .) Output: Dictionary
+      .) Purpose: constructs and returns a dictionary containing the necessary data from the block: a list of hashes of transactions (transaction_hashes), the hash of the previous block (hash_previous_block), and the nonce (nonce).
+
+    - Get hash
+      .) Input: acts on Block
+      .) Output: hashed JSON data
+      .) Purpose: This method calculates the current block's hash by first converting the block's data into a dictionary using the Get Dictionary method, then serializing that dictionary to a JSON-formatted string, and finally hashing the JSON string using the imported hash function. The resulting hash is the one associated with the current block.
+
+      
+
+
 
 
 
