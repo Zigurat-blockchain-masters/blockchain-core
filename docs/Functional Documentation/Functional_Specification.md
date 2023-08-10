@@ -54,30 +54,30 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 1.2.a. "Block" class.
 
   Modules called:
-    - a JSON encoder module
-    - a module that provides a hash function:
-      .) encode string to UTF-8
-      .) hash object
-      .) encode to base64
-      .) decode to UTF-8
+  a. a JSON encoder module
+  b.  module that provides a hash function:
+    i. encode string to UTF-8
+    ii. hash object
+    iii. encode to base64
+    iv. decode to UTF-8
       
   Attributes:
-    - Hash from previous block (binary string)
-    - Transactions 
-    - Nonce
+  a. Hash from previous block (binary string)
+  b. Transactions 
+  c. Nonce
 
   Methods: 
-    - Get Dictionary
-      .) Input: acts on Block
-      .) Output: Dictionary
-      .) Purpose: constructs and returns a dictionary containing the necessary data from the block: a list of hashes of transactions (transaction_hashes), the hash of the previous block (hash_previous_block), and the nonce (nonce).
+  a. Get Dictionary
+    i. Input: acts on Block
+    ii. Output: Dictionary
+    iii. Purpose: constructs and returns a dictionary containing the necessary data from the block: a list of hashes of transactions (transaction_hashes), the hash of the previous block (hash_previous_block), and the nonce (nonce).
 
-    - Get hash
-      .) Input: acts on Block
-      .) Output: hashed JSON data
-      .) Purpose: This method calculates the current block's hash by first converting the block's data into a dictionary using the Get Dictionary method, then serializing that dictionary to a JSON-formatted string, and finally hashing the JSON string using the imported hash function. The resulting hash is the one associated with the current block.
+  b. Get hash
+    i. Input: acts on Block
+    ii. Output: hashed JSON data
+    iii. Purpose: This method calculates the current block's hash by first converting the block's data into a dictionary using the Get Dictionary method, then serializing that dictionary to a JSON-formatted string, and finally hashing the JSON string using the imported hash function. The resulting hash is the one associated with the current block.
 
-      
+1.2.b.  Generation of the Genesis block with an initial value of Hash, Transaction, Nonce.
 
 
 
