@@ -75,6 +75,7 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 
 
 ##### 1.2.b Generation of the Genesis block with an initial value of Hash, Transaction, Nonce
+<br>
 
 #### 1.3 Transactions
 
