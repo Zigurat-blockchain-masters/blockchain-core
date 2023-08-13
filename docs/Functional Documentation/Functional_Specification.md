@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed (in review)
+Proposed (in progress)
 
 ## Part 1: Purpose
 
