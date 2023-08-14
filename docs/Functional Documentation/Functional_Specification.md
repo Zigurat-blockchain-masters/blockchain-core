@@ -86,13 +86,13 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 
 **Modules called:**
 
-JSON encoder module
-hashing, to verify validity of a block
-config, brings the target used by mining (difficulty)
-block, to verify validity, append to blockchain and generate history
-genesis, to generate initial block
-tx, validation
-utxo, validation
+1. JSON encoder module
+2. hashing, to verify validity of a block
+3. config, brings the target used by mining (difficulty)
+4. block, to verify validity, append to blockchain and generate history
+5. genesis, to generate initial block
+6. tx, validation
+7. utxo, validation
 
 
 **Attributes:**
