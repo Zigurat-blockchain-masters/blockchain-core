@@ -106,30 +106,36 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
    * Output: boolean
    * Purpose: returns current active blockchain or creates a new one.
 
+
 2. insert block
    * Input: block
    * Output: boolean
    * Purpose: Appends a new block to the blockchain, after validating that the block itself is valid, as well as its transactions and UTXOs.
+
 
 3. check against target 
    * Input: acts on blockchain (self), receives a hash_string 
    * Output: boolean
    * Purpose: checks whether or not a block 's hash_string is fulfills the requested difficulty by confirming a specified amount of zeroes at the beginning of its hash.
 
+
 4. get UTXOs 
    * Input: acts on blockchain (self), receives a pk (public key)
    * Output: array of UTXOs (object, unspent outputs)
    * Purpose: returns a list of all UTXOs by public key.
+
 
 5. get topmost block
    * Input: acts on blockchain (self)
    * Output: returns a block object
    * Purpose: Used by the mining module to receive the most recent block appended to the blockchain.
 
+
 6. is valid UTXO
    * Input: acts on blockchain (self), receives a UTXO
    * Output: boolean
    * Purpose: validates a UTXO by confirming that the UTXO is valid. Confirms that it's not present in the blockchain (double spending)
+
 
 7. get json
    * Input: acts on blockchain (self)
