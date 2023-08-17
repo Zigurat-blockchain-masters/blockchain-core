@@ -82,7 +82,8 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 #### 1.4 Wallets
 
 **Modules called:**
-   - Crypto functions that generate pk, pubk, and pem 
+   - Crypto functions that generate private key, public key, and pem 
+
 
 **Methods:**
 1. Initialization: 
