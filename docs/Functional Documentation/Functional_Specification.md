@@ -91,7 +91,8 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
    - Purpose: Creates a pair of private_key and password and saves it locally in a json format
 
 2. send_money: 
-   - Inputs: receiver_pks, msg
+   - Inputs: receiver_public_keys, msg
+
    - Output: -
    - Purpose: Creates a tx and inserts it in the mempool
 
