@@ -87,6 +87,52 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 
 #### 1.4 Wallets
 
+**Modules called:**
+   - Crypto functions that generate private key, public key, and pem 
+
+
+**Methods:**
+1. Initialization: 
+   - Input: -
+   - Ouput: pair of private_key and password 
+   - Purpose: Creates a pair of private_key and password and saves it locally in a json format
+
+2. send_money: 
+   - Inputs: receiver_public_keys, msg
+
+   - Output: -
+   - Purpose: Creates a tx and inserts it in the mempool
+
+3. get_utxos: 
+
+   - Input: money (in wallet)
+   - Ouput: list of utxos needed
+   - Purpose: Gets a list of utxos and checks their validity
+
+4. create_tx:
+
+   - Inputs: utxos, receiver_public_key, msg
+   - Output: singed(tx)
+   - Purpose: Creates an unsigned tx which is then signed and returned
+
+5. insert_to_mempool: 
+
+   - Input: tx
+   - Output: -
+   - Purpose: Inserts a singed tx on the mempool
+
+6. save_to_file: 
+
+   - Input: private_key & password in a json data object
+   - Output: json file with private_key & password 
+   - Purpose: Saves the created private_key + password locally in a json file
+
+7. load_from_file: 
+
+   - Input: saved json private_key + password
+   - Output: -
+   - Purpose: Provides the ability to load a saved pair of private_key and password in json format
+
 #### 1.5 Blockchain
 
 #### 1.6 Entry point (main)
