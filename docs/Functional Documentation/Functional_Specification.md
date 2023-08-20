@@ -47,6 +47,63 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 
 #### 1.1 Cryptography
 
+**Modules called:**
+
+- Cryptography functions for key generation and management
+
+**Functions:**
+
+1. `generate_password`
+   - Input: none
+   - Output: password (string)
+   - Purpose: Generates a random password for cryptographic operations.
+
+2. `generate_key_pair`
+   - Input: none
+   - Output: private key, public key
+   - Purpose: Generates a pair of cryptographic keys (private and public).
+
+3. `generate_pem`
+   - Input: private key, password
+   - Output: PEM-encoded private key
+   - Purpose: Generates a PEM-encoded private key with password protection.
+
+4. `generate_public_pem`
+   - Input: public key
+   - Output: PEM-encoded public key
+   - Purpose: Generates a PEM-encoded public key.
+
+5. `load_public_key`
+   - Input: public PEM
+   - Output: public key
+   - Purpose: Loads a public key from a PEM-encoded string.
+
+6. `load_private_key`
+   - Input: private PEM, password
+   - Output: private key
+   - Purpose: Loads a private key from a PEM-encoded string with password.
+
+7. `generate_private_pem_string`
+   - Input: password string
+   - Output: private PEM string
+   - Purpose: Generates a private key, PEM-encodes it with password, and returns as a string.
+
+8. `generate_public_pem_string`
+   - Input: private PEM string, password
+   - Output: public PEM string
+   - Purpose: Generates a public key from a private key, PEM-encodes it, and returns as a string.
+
+9. `sign`
+   - Input: private PEM string, password, message
+   - Output: signature (base64 encoded)
+   - Purpose: Signs a message using a private key and password, returning the signature as a base64-encoded string.
+
+10. `verify`
+    - Input: public PEM string, signature, message
+    - Output: boolean
+    - Purpose: Verifies the authenticity of a signature for a given message using a public key and the original message.
+
+
 #### 1.2 Blocks
 
 <br>
@@ -242,12 +299,12 @@ None
 
 2. Check against target
 
-   - Checks wether the hash is correct to cement a new block
+   - Checks whether the hash is correct to cement a new block
 
 3. Mine
    - Adds transactions from the mempool to a new block with a random integer value.
-   - Continously checks wether the hash extends the current blockchain.
-   - If succesful the block with transactions are added (cemented) on the blockchain and the process starts again.
+   - Continuously checks whether the hash extends the current blockchain.
+   - If successful the block with transactions are added (cemented) on the blockchain and the process starts again.
 
 ##### 1.7.c The mechanism
 
@@ -255,7 +312,7 @@ None
 
 1. Proof of Work - As implemented in the python example and defined in chapter 1.7.a / b
 
-   - The miner class takes transactions from the memory pool and checks wether they are valid transactions according to the nonce used. If valid, the TXs are added to the newly mined block and cemented on the chain.
+   - The miner class takes transactions from the memory pool and checks whether they are valid transactions according to the nonce used. If valid, the TXs are added to the newly mined block and cemented on the chain.
 
 2. Proof of Stake
    - It is entirely possible to pick another consensus mechanism such as PoW for the new implementation.
