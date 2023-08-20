@@ -57,51 +57,67 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
    - Input: none
    - Output: password (string)
    - Purpose: Generates a random password for cryptographic operations.
+   - Error handling: None required.
+
 
 2. `generate_key_pair`
    - Input: none
    - Output: private key, public key
    - Purpose: Generates a pair of cryptographic keys (private and public).
+   - Error handling: None required.
 
 3. `generate_pem`
    - Input: private key, password
    - Output: PEM-encoded private key
    - Purpose: Generates a PEM-encoded private key with password protection.
+   - Error handling: Validate inputs are not empty or invalid. Handle errors for invalid private key or password.
 
 4. `generate_public_pem`
    - Input: public key
    - Output: PEM-encoded public key
    - Purpose: Generates a PEM-encoded public key.
+   - Error handling: Validate input is not empty or invalid. Handle errors for invalid public key.
 
 5. `load_public_key`
    - Input: public PEM
    - Output: public key
    - Purpose: Loads a public key from a PEM-encoded string.
+   - Error handling: Validate input is not empty or invalid. Handle errors for invalid public PEM.
 
 6. `load_private_key`
    - Input: private PEM, password
    - Output: private key
    - Purpose: Loads a private key from a PEM-encoded string with password.
+   - Error handling: Validate inputs are not empty or invalid. Handle errors for invalid private PEM or password.
+
 
 7. `generate_private_pem_string`
    - Input: password string
    - Output: private PEM string
    - Purpose: Generates a private key, PEM-encodes it with password, and returns as a string.
+   - Error handling: Validate input password string is not empty or invalid. Handle errors for invalid password.
+
 
 8. `generate_public_pem_string`
    - Input: private PEM string, password
    - Output: public PEM string
    - Purpose: Generates a public key from a private key, PEM-encodes it, and returns as a string.
+   - Error handling: Validate inputs are not empty or invalid. Handle errors for invalid private PEM or password.
+
 
 9. `sign`
    - Input: private PEM string, password, message
    - Output: signature (base64 encoded)
    - Purpose: Signs a message using a private key and password, returning the signature as a base64-encoded string.
+   - Error handling: Validate inputs are not empty or invalid. Handle errors for invalid private PEM, password, or message.
+
 
 10. `verify`
     - Input: public PEM string, signature, message
     - Output: boolean
     - Purpose: Verifies the authenticity of a signature for a given message using a public key and the original message.
+    - Error handling: Validate inputs are not empty or invalid. Handle errors for invalid public PEM, signature, or message.
+
 
 
 #### 1.2 Blocks
