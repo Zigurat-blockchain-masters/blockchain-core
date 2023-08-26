@@ -1,0 +1,39 @@
+{
+  "name": "blockchain-core",
+  "version": "1.0.0",
+  "license": "GPL-3.0",
+  "description": "Implementation of core blockchain with Javascript",
+  "main": "index.js",
+  "repository": "https://github.com/Zigurat-blockchain-masters/blockchain-core.git",
+  "contributors": [
+    {
+      "name": "Roman Kokhatskyi",
+      "github": "rkokhatskyi"
+    },
+    {
+      "name": "Jean-Christophe Rigo",
+      "github": "jcrigo86"
+    },
+    {
+      "name": "Walter von Gabain",
+      "github": "waltervongabain"
+    },
+    {
+      "name": "Miguel Santamaria",
+      "github": "rkokhatskyi"
+    },
+    {
+      "name": "Roman Kokhatskyi",
+      "github": "rkokhatskyi"
+    }
+  ],
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "express": "^4.18.2",
+    "uuid": "^9.0.0",
+    "body-parser": "1.20.2",
+    "crypto-hash": "^2.0.1",
+    "crypto-ts": "^1.0.2",
+    "crypto-random-string": "^5.0.0"
+  }
+}
