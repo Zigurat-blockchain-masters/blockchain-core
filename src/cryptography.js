@@ -13,6 +13,13 @@ function generateKeyPair() {
     });
 }
 
+function generatePublicPemString(passwordString) {
+    const keyPair = generateKeyPair();
+    const publicKey = keyPair.publicKey;
+    const publicPem = generatePublicPem(publicKey);
+    return publicPem.toString();
+}
+
 function generatePem(privateKey, password) {
     return privateKey.export({
         type: 'pkcs8',
