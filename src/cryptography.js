@@ -10,14 +10,13 @@ function generatePassword() {
         const randomness = crypto.randomBytes(128);
         return randomness.toString('base64');
     } catch (error) {
-        console.error('Error while generating password:', error.message);
-        throw new Error('Failed to generate a random password.');
+        throw new Error(`Error while generating password: ${error.message}`);
     }
 }
 
 /**
  * Generates a pair of cryptographic keys (private and public).
- * @returns {object} An object containing private and public keys.
+ * @returns {Object} An object containing private and public keys.
  * @throws {Error} Throws an error if generation fails.
  */
 function generateKeyPair() {
@@ -28,16 +27,15 @@ function generateKeyPair() {
             privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
         });
     } catch (error) {
-        console.error('Error while generating key pair:', error.message);
-        throw new Error('Failed to generate a key pair.');
+        throw new Error(`Error while generating key pair: ${error.message}`);
     }
 }
 
 /**
  * Generates a PEM-encoded private key with password protection.
- * @param {object} privateKey - The private key.
+ * @param {string} privateKey - The private key.
  * @param {string} password - The password for encryption.
- * @returns {string} A PEM-encoded private key.
+ * @returns {string} The PEM-encoded private key.
  * @throws {Error} Throws an error if generation fails.
  */
 function generatePem(privateKey, password) {
@@ -48,61 +46,57 @@ function generatePem(privateKey, password) {
             passphrase: password,
         });
     } catch (error) {
-        console.error('Error while generating PEM-encoded private key:', error.message);
-        throw new Error('Failed to generate a PEM-encoded private key.');
+        throw new Error(`Error while generating PEM-encoded private key: ${error.message}`);
     }
 }
 
 /**
  * Generates a PEM-encoded public key.
- * @param {object} publicKey - The public key.
- * @returns {string} A PEM-encoded public key.
+ * @param {string} publicKey - The public key.
+ * @returns {string} The PEM-encoded public key.
  * @throws {Error} Throws an error if generation fails.
  */
 function generatePublicPem(publicKey) {
     try {
         return publicKey.export({ type: 'spki', format: 'pem' });
     } catch (error) {
-        console.error('Error while generating PEM-encoded public key:', error.message);
-        throw new Error('Failed to generate a PEM-encoded public key.');
+        throw new Error(`Error while generating PEM-encoded public key: ${error.message}`);
     }
 }
 
 /**
  * Loads a public key from a PEM-encoded string.
- * @param {string} publicPem - The PEM-encoded public key.
- * @returns {object} The loaded public key.
+ * @param {string} publicPem - The PEM-encoded public key as a string.
+ * @returns {Object} The loaded public key.
  * @throws {Error} Throws an error if loading fails.
  */
 function loadPublicKey(publicPem) {
     try {
         return crypto.createPublicKey({ key: publicPem, format: 'pem' });
     } catch (error) {
-        console.error('Error while loading public key:', error.message);
-        throw new Error('Failed to load a public key from PEM.');
+        throw new Error(`Error while loading public key: ${error.message}`);
     }
 }
 
 /**
- * Loads a private key from a PEM-encoded string with password.
- * @param {string} privatePem - The PEM-encoded private key.
- * @param {string} password - The password used for encryption.
- * @returns {object} The loaded private key.
+ * Loads a private key from a PEM-encoded string with a password.
+ * @param {string} privatePem - The PEM-encoded private key as a string.
+ * @param {string} password - The password for decryption.
+ * @returns {Object} The loaded private key.
  * @throws {Error} Throws an error if loading fails.
  */
 function loadPrivatePem(privatePem, password) {
     try {
         return crypto.createPrivateKey({ key: privatePem, format: 'pem', passphrase: password });
     } catch (error) {
-        console.error('Error while loading private key:', error.message);
-        throw new Error('Failed to load a private key from PEM with password.');
+        throw new Error(`Error while loading private key: ${error.message}`);
     }
 }
 
 /**
- * Generates a private key, PEM-encodes it with password, and returns as a string.
- * @param {string} passwordString - The password for encryption.
- * @returns {string} A PEM-encoded private key as a string.
+ * Generates a private key, PEM-encodes it with a password, and returns it as a string.
+ * @param {string} passwordString - The password as a string.
+ * @returns {string} The PEM-encoded private key as a string.
  * @throws {Error} Throws an error if generation fails.
  */
 function generatePrivatePemString(passwordString) {
@@ -111,16 +105,15 @@ function generatePrivatePemString(passwordString) {
         const pem = generatePem(privateKey, passwordString);
         return pem.toString();
     } catch (error) {
-        console.error('Error while generating private PEM string:', error.message);
-        throw new Error('Failed to generate a PEM-encoded private key string.');
+        throw new Error(`Error while generating private PEM string: ${error.message}`);
     }
 }
 
 /**
- * Generates a PEM-encoded public key from a private key string and password.
+ * Generates a public key from a private key, PEM-encodes it, and returns it as a string.
  * @param {string} privatePemString - The PEM-encoded private key as a string.
- * @param {string} password - The password for encryption.
- * @returns {string} A PEM-encoded public key as a string.
+ * @param {string} password - The password for decryption.
+ * @returns {string} The PEM-encoded public key as a string.
  * @throws {Error} Throws an error if generation fails.
  */
 function generatePublicPemString(privatePemString, password) {
@@ -129,15 +122,14 @@ function generatePublicPemString(privatePemString, password) {
         const publicKey = privateKey.publicKey;
         return generatePublicPem(publicKey).toString();
     } catch (error) {
-        console.error('Error while generating public PEM string:', error.message);
-        throw new Error('Failed to generate a PEM-encoded public key string.');
+        throw new Error(`Error while generating public PEM string: ${error.message}`);
     }
 }
 
 /**
  * Signs a message using a private key and password, returning the signature as a base64-encoded string.
  * @param {string} privatePemString - The PEM-encoded private key as a string.
- * @param {string} password - The password used for decryption.
+ * @param {string} password - The password for decryption.
  * @param {string} message - The message to be signed.
  * @returns {string} The base64-encoded signature.
  * @throws {Error} Throws an error if signing fails.
@@ -148,8 +140,7 @@ function sign(privatePemString, password, message) {
         const signature = privateKey.sign(message, 'base64');
         return signature.toString('base64');
     } catch (error) {
-        console.error('Error while signing:', error.message);
-        throw new Error('Failed to sign the message.');
+        throw new Error(`Error while signing: ${error.message}`);
     }
 }
 
@@ -166,8 +157,7 @@ function verify(publicPemString, signature, message) {
         const publicKey = loadPublicKey(publicPemString);
         return publicKey.verify(message, signature, 'base64');
     } catch (error) {
-        console.error('Error while verifying:', error.message);
-        throw new Error('Failed to verify the signature.');
+        throw new Error(`Error while verifying: ${error.message}`);
     }
 }
 
