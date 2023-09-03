@@ -1,21 +1,21 @@
-const UTXO = require('UTXO')
-const Block = require('block')
-const mining_target = require('CONFIG')
-const Transaction = require('transaction')
-const genesis_coinbase = require('genesis')
+import { UTXO } from 'UTXO';
+import { block } from 'block';
+import { miningTarget } from 'CONFIG';
+import { transaction } from 'transaction';
+import { genesisCoinbase } from 'genesisCoinbase';
 
-let current_blockchain
+let currentBlockchain
 
-const get_blockchain = () => {
-  if (current_blockchain === undefined) {
-    current_blockchain = new Blockchain()
+export const getBlockchain = () => {
+  if (currentBlockchain === undefined) {
+    currentBlockchain = new Blockchain()
   }
-  return current_blockchain
+  return currentBlockchain
 }
 
 class Blockchain{
   constructor(){
-    this.chain = [genesis_coinbase]
+    this.chain = [genesisCoinbase]
   }
 
 
@@ -35,16 +35,17 @@ class Blockchain{
         }
       }
     }
-    if (!this.checkAgainstTarget(mining_target, block.getHash())) {
+    if (!this.checkAgainstTarget(miningTarget, block.getHash())) {
       return false;
     }
     this.chain.push(block);
     return true;
   }
 
-
   isChainValid(){
     for(let i = 1; i < this.chain.length; i++){
+      if (this.chain.length === 1) {throw new Error("Chain only contains the genesis block")}
+
       const currentBlock = this.chain[i];
       const previousBlock = this.chain[i - 1]
 
@@ -78,7 +79,7 @@ class Blockchain{
     for (const block of this.chain) {
       for (const tx of block.transactions) {
         let counter = 0;
-        for (const pk of tx.receiver_public_keys) {
+        for (const pk of tx.receiverPublicKeys) {
           if (pk === publicKey) {
             const utxo = new UTXO(tx.getHash(), publicKey, tx.messages[counter]);
             utxos.push(utxo);
@@ -94,8 +95,8 @@ class Blockchain{
   isValidUTXO(UTXO) {
     for (const block of this.chain) {
       for (const tx of block.transactions) {
-        if (tx.getHash() === UTXO.tx_hash) {
-          const index = tx.receiver_public_keys.indexOf(UTXO.public_key);
+        if (tx.getHash() === UTXO.txHash) {
+          const index = tx.receiverPublicKeys.indexOf(UTXO.publicKey);
           if (index !== -1 && UTXO.message === tx.messages[index]) {
             // UTXO found with matching transaction hash, public key, and message
             return true;
@@ -115,6 +116,4 @@ class Blockchain{
       blocks
     });
   }
-
-
-module.exports.Blockchain = get_blockchain()
+}
