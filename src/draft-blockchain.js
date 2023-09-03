@@ -67,9 +67,10 @@ class Blockchain{
   }
 
 
-  checkAgainstTarget(mining_target, hash) {
-    return hash.substring(0, mining_target) !== Array(mining_target + 1).join("0") ? true : false;   
-  } 
+  checkAgainstTarget(miningTarget, hash) {
+    const targetPrefix = '0'.repeat(miningTarget);
+    return hash.startsWith(targetPrefix);
+  }
 
   
   getUTXOs(publicKey) {
