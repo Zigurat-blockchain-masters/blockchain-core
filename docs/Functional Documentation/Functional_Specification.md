@@ -309,6 +309,57 @@ If the provided data passes these assertions, the constructor sets instance vari
    - Purpose: This method checks the validity of the transaction. It uses the crypto.verify function to verify the digital signature of the transaction, which involves using the public key of the first UTXO and the calculated hash of the transaction. It calculates the total amount spent (sum of messages) and the total balance from the UTXOs (sum of message attribute of each UTXO). It checks if the balance is equal to the spent amount, ensuring that the transaction doesn't spend more than it has. The method returns True if the signature is valid and the amounts match, otherwise False.
    - Error handling: None
 
+##### 1.3.d "Coinbase" class
+
+This code defines a Coinbase class that represents a Coinbase transaction in a cryptocurrency system. Coinbase transactions reward miners with a specific amount of cryptocurrency for successfully mining a new block. This class provides methods for generating a dictionary and JSON representation of the coinbase transaction data, calculating a hash, and indicating that the transaction is always valid.
+
+**Modules called:**
+
+1. JSON encoder module
+2. Module that provides a hash function:
+   - encode string to UTF-8
+   - hash object
+   - encode to base64
+   - decode to UTF-8
+3. UTXO classes
+
+**Attributes:**
+
+The constructor takes one parameter:
+   - receiver: which represents the public key of the receiver of the mining reward
+
+It initializes two instance variables:
+   - receiver_public_keys: A list containing the receiver's public key. In Coinbase transactions, there's typically only one receiver.
+   - messages: A list containing the amount of the reward. In the original code, it is set to [50], which typically represents a 50-unit reward in the cryptocurrency (e.g., 50 bitcoins in Bitcoin).
+
+**Methods:**
+
+1. `get_hash`
+   - Input: self
+   - Output: hash of JSON-formatted Dictionary (originally: Python format)
+   - Purpose: This method calculates a hash value for a JSON representation of the transaction data.
+   It constructs a dictionary containing the receiver's public key and the reward amount. It converts this dictionary into a JSON-formatted string using json.dumps. Finally, it calculates the hash of this JSON string using the hashing.hash function and returns the result.
+   - Error handling: None
+
+2. `is_valid`
+   - Input: self
+   - Output: boolean
+   - Purpose: This method always returns True. 
+   - Error handling: None
+
+3. `get_dict`
+   - Input: self
+   - Output: Dictionary
+   - Purpose: This method constructs a dictionary containing the receiver's public key and the reward amount. It returns this dictionary.
+   - Error handling: None
+
+4. `get_json`
+   - Input: self
+   - Output: JSON-formatted dictionary
+   - Purpose: This method converts the dictionary obtained from get_dict into a JSON-formatted string using json.dumps. It returns the JSON-formatted string.
+   - Error handling: None
+
+
 #### 1.4 Wallets
 
 **Modules called:**
