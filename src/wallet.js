@@ -1,90 +1,90 @@
-const fs = require('fs');
-const crypto = require('crypto');
+import { existsSync, readFileSync, writeFileSync } from 'fs'; // Import the fs module for file operations
+import { GetMempool } from './Mempool';
+import { Transaction, UnsignedTransaction } from './Transaction';
 
-let privateKey = null;
-let publicKey = null;
 
-// Mempool and UTXOs simulation
-const mempool = [];
-const utxos = [];
+class Wallet {
+    constructor() {
+        if (existsSync('private_key.json')) {
+            const { PrivateKey, Password } = this.loadFromFile();
+            this.PrivateKey = PrivateKey;
+            this.Password = Password;
+        } else {
+            this.Password = this.generatePassword();
+            this.PrivateKey = this.generatePrivatePemString(this.password);
+            this.saveToFile();
+        }
+        this.PublicKey = this.generatePublicPemString(this.PrivateKey, this.Password);
+    }
 
-// Generate keys and save to file
-function generateKeys() {
-  const { privateKey: privKey, publicKey: pubKey } = crypto.generateKeyPairSync('rsa', {
-    modulusLength: 2048,
-    publicKeyEncoding: { type: 'spki', format: 'pem' },
-    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-  });
+    sendMoney(ReceiverPks, Msgs) {
+        let MoneyToSend = 0;
+        for (const m of Msgs) {
+            MoneyToSend += m;
+        }
+        const Tx = this.createTransaction(this.getUTXOs(MoneyToSend), ReceiverPks, Msgs);
+        this.insertToMempool(Tx);
+    }
 
-  privateKey = privKey;
-  publicKey = pubKey;
+    getUTXOs(Money) {
+        const Blockchain = getBlockchain();
+        const utxos = Blockchain.getUTXOs(this.generatePublicPemString(this.PrivateKey, this.Password));
 
-  fs.writeFileSync('private_key.pem', privateKey);
-  fs.writeFileSync('public_key.pem', publicKey);
+        if (Array.isArray(utxos)) {
+            console.log("UTXOs are inside list")
+        } else {
+            console.log("UTXOs are not a list")
+        }
+
+        const ListOfValidUTXO = utxos.filter(i => Blockchain.isValidUTXO(i));
+
+        const NeededUTXOs = [];
+        let TotalAmount = 0;
+
+        for (const i of valid_utxos) {
+            NeededUTXOs.push(i);
+            TotalAmount += i.amount;
+
+            if (TotalAmount >= Money) {
+                break;
+            }
+        }
+
+        return NeededUTXOs;
+    }
+
+    createTransaction(utxos, ReceiverPks, Msgs) {
+        const Unsigned = new UnsignedTransaction({ utxos, receiver_public_keys: ReceiverPks, messages: Msgs });
+        const Signature = Unsigned.sign({ priv_key: this.private_key, password: this.password });
+        return new Transaction({ utxos, receiver_public_keys: ReceiverPks, messages: Msgs, Signature });
+    }
+
+    insertToMempool(tx) {
+        GetMempool().insertTransaction(tx);
+    }
+
+    saveToFile() {
+        const Data = {
+            PrivateKey: this.PrivateKey,
+            Password: this.Password
+        };
+        try {
+            writeFileSync('private_key.json', JSON.stringify(Data));
+        }
+        catch (error) {
+            console.log("There was an error while saving the file to disk")
+            console.log(error)
+        }
+    }
+
+    loadFromFile() {
+        try {
+            const FileData = readFileSync('private_key.json', 'utf8');
+            const Data = JSON.parse(FileData);
+            return { private_key: Data.PrivateKey, Password: Data.Password };
+        } catch (error) {
+            console.log("There was an error while loading the file")
+            console.log(error)
+        }
+    }
 }
-
-// Load keys from file
-function loadKeys() {
-  privateKey = fs.readFileSync('private_key.pem', 'utf-8');
-  publicKey = fs.readFileSync('public_key.pem', 'utf-8');
-}
-
-// Send money and insert transaction into mempool
-function sendMoney(senderPrivateKey, recipientPublicKey, amount) {
-  const transaction = {
-    sender: senderPrivateKey,
-    recipient: recipientPublicKey,
-    amount: amount,
-    signature: null,
-  };
-
-  mempool.push(transaction);
-  return transaction;
-}
-
-// Retrieve a list of UTXOs and validate them
-function getUTXOs() {
-  return utxos.filter((utxo) => {
-    // Add validation logic here
-    return true;
-  });
-}
-
-// Create and sign a transaction
-function createTransaction(senderPrivateKey, recipientPublicKey, amount) {
-  const transaction = sendMoney(senderPrivateKey, recipientPublicKey, amount);
-  const sign = crypto.createSign('RSA-SHA256');
-  sign.update(JSON.stringify(transaction));
-  transaction.signature = sign.sign(privateKey, 'base64');
-  return transaction;
-}
-
-// Insert transaction into mempool
-function insertToMempool(transaction) {
-  mempool.push(transaction);
-}
-
-// Main logic
-if (!fs.existsSync('private_key.pem') || !fs.existsSync('public_key.pem')) {
-  generateKeys();
-} else {
-  loadKeys();
-}
-
-const senderPrivateKey = privateKey;
-const recipientPublicKey = publicKey;
-
-const transaction = createTransaction(senderPrivateKey, recipientPublicKey, 10);
-console.log('Transaction created and signed:', transaction);
-
-// Simulate processing mempool
-insertToMempool(transaction);
-console.log('Transaction inserted into mempool:', mempool);
-
-// Simulate checking UTXOs
-const validatedUTXOs = getUTXOs();
-console.log('Validated UTXOs:', validatedUTXOs);
-
-
-
-
