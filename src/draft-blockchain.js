@@ -123,15 +123,11 @@ class Blockchain{
   
 
   getJson() {
-    const blocks = [];
-    for (const block of this.blocks) {
-      blocks.push(block.toJSON());
-    }
+    const blocks = this.chain.map(block => block.toJSON());
     return JSON.stringify({
-      "blocks": blocks
+      blocks
     });
   }
-}
 
 
 module.exports.Blockchain = get_blockchain()
