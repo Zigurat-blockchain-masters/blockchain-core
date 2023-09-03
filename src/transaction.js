@@ -106,3 +106,33 @@ class UnsignedTransaction {
         return _sign(priv_key, password, this.getHash());
     }
 }
+
+class Coinbase {
+    constructor(receiver) {
+        this.receiver_public_keys = [receiver];
+        this.messages = [50];
+    }
+
+    getHash() {
+        return hashing.hash(JSON.stringify({
+            "receiver_public_keys": this.receiver_public_keys,
+            "messages": this.messages
+        }));
+    }
+
+    isValid() {
+        return true;
+    }
+
+    getDict() {
+        const data = {
+            "receiver_public_keys": this.receiver_public_keys,
+            "messages": this.messages
+        };
+        return data;
+    }
+
+    getJson() {
+        return JSON.stringify(this.getDict());
+    }
+}
