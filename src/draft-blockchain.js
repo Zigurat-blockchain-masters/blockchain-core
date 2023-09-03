@@ -92,33 +92,20 @@ class Blockchain{
 
 
   isValidUTXO(UTXO) {
-    let valid = false;
     for (const block of this.chain) {
       for (const tx of block.transactions) {
         if (tx.getHash() === UTXO.tx_hash) {
-          let counter = 0;
-          for (const pk of tx.receiver_public_keys) {
-            if (pk === UTXO.public_key) {
-              if (UTXO.message === tx.messages[counter]) {valid = true}
-            } 
-            counter++;
+          const index = tx.receiver_public_keys.indexOf(UTXO.public_key);
+          if (index !== -1 && UTXO.message === tx.messages[index]) {
+            // UTXO found with matching transaction hash, public key, and message
+            return true;
           }
         }
       }
     }
-    if (!valid) {
-      return false;
-    }
-    for (const block of this.chain) {
-      for (const tx of block.transactions) {
-        if (tx instanceof Transaction) {
-          for (const tx_utxo of tx.utxos) {
-            if (tx_utxo.getHash() === UTXO.getHash()) { return false }
-          }
-        }
-      }
-    }
-    return valid;
+
+    // UTXO not found in any transactions, invalid
+    return false;
   }
   
 
