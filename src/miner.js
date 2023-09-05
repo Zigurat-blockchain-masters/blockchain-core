@@ -1,9 +1,12 @@
-const hashing = require("./hashing"); // Replace with actual path
-const { mempool, getMempool } = require("./mempool").default; // Replace with actual path
-const block = require("./block"); // Replace with actual path
-const { getBlockchain } = require("./blockchain"); // Replace with actual path
-const { coinbase, transaction } = require("./transaction"); // Replace with actual path
-const { miningTarget } = require("./CONFIG"); // Replace with actual path
+require('dotenv').config();
+const hashing = require('./hashing');
+const { getMempool } = require('./mempool');
+const block = require('./block');
+const { getBlockchain } = require('./blockchain');
+const { coinbase, transaction } = require('./transaction');
+const { miningTarget } = require('./CONFIG');
+const randomNonce = Math.floor(Math.random() * 16)
+const publicKey = process.env.PUBLIC_KEY;
 
 class Miner {
   constructor(minerPublicKey) {
@@ -13,42 +16,32 @@ class Miner {
 
   checkAgainstTarget(hashString) {
     const hex = hashing.stringToHex(hashString);
-    for (let i = 1; i <= miningTarget; i++) {
-      if (hex[i] !== "0") {
-        return false;
-      }
-    }
-    return true;
+    return hex.startsWith("0".repeat(miningTarget));
   }
 
   mine() {
     const topmostBlock = getBlockchain().getTopmostBlock();
-    if (!(topmostBlock instanceof Block)) {
+    if (!(topmostBlock instanceof block)) {
       throw new Error("Invalid topmost block");
     }
 
-    const hash_prev = topmostBlock.getHash();
+    const hashPrev = topmostBlock.getHash();
 
-    const txs = getMempool().tx;
+    const mempool = getMempool();
 
-    txs.forEach((tx) => {
-      if (
-        !(tx instanceof transaction || tx instanceof coinbase) ||
-        !tx.isValid()
-      ) {
-        txs.splice(txs.indexOf(tx), 1);
-      }
+    const filteredTxs = mempool.tx.filter((tx) => {
+      return (tx instanceof transaction || tx instanceof coinbase) && tx.isValid();
     });
 
-    const coinbase = new Coinbase(this.publicKey);
+    const coinbaseInstance = new coinbase(this.publicKey);
 
-    txs.unshift(coinbase);
+    txs.unshift(coinbaseInstance);
 
     while (true) {
       const block = new block(
-        hashPrev,
-        txs,
-        Math.floor(Math.random() * 9999999999999999999999999999)
+          hashPrev,
+          txs,
+          randomNonce
       );
 
       const hash = block.getHashes();
@@ -65,4 +58,4 @@ class Miner {
   }
 }
 
-const miner = new Miner("your_public_key"); // TODO replace with your public key
+const miner = new Miner(publicKey);

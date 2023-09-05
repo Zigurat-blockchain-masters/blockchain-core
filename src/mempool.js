@@ -7,11 +7,8 @@ class Mempool {
     this.tx = [];
   }
 
-  insert_transaction(tx) {
-    if (!(tx instanceof transaction)) {
-      throw new Error("Invalid transaction");
-    }
-    if (!tx.is_valid()) {
+  insertTransaction(tx) {
+    if (!(tx instanceof transaction) || !tx.isValid()) {
       throw new Error("Invalid transaction");
     }
     this.tx.push(tx);
@@ -25,7 +22,7 @@ function getMempool() {
   return mempool;
 }
 
-export default {
+module.exports = {
   transaction,
-  mempool,
+  Mempool
 };
