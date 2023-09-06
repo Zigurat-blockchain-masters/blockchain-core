@@ -246,7 +246,7 @@ If the provided data passes these assertions, the constructor sets instance vari
    - Input: Private Key and Password
    - Output: Signature
    - Purpose: It calculates the hash of the transaction using the Get Hash method. It then calls the crypto.sign function to create a digital signature of the transaction hash using the provided private key and password. The resulting signature is returned.
-   - Error handling: None
+   - Error handling: Validate input private key and password strings are not empty or invalid. Handle errors for invalid key or password.
 
 
 ##### 1.3.c "Transaction" class
