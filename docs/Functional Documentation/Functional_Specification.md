@@ -15,6 +15,7 @@ Building a Blockchain functional prototype quickly and effectively.
 3.  _**Node:**_ A participant in the blockchain network that maintains a copy of the entire blockchain and participates in transaction validation and consensus.
 4.  _**Consensus mechanism:**_ A protocol used to achieve agreement among nodes in a distributed network, ensuring the validity and consistency of the blockchain.
 5.  _**Cryptography:**_ Methods to secure communication and data in the presence of malicious third-parties known as adversaries. Encryption uses an algorithm and a key to transform an input (plaintext) into an encrypted output (ciphertext).
+6.  _**UTXO:**_ The abbreviation "UTXO" typically stands for "Unspent Transaction Output" and is commonly used in blockchain systems. A UTXO represents a certain amount of cryptocurrency that has been authorized by a sender and is available to be spent by a recipient. https://en.wikipedia.org/wiki/Unspent_transaction_output
 
 #### Background
 
@@ -143,20 +144,221 @@ The codebase will be written in JavaScript as per decision made in [ADR-001](htt
 
 **Methods:**
 
-1. Get Dictionary
+1. `Get Dictionary`
    - Input: acts on Block
    - Output: Dictionary
    - Purpose: constructs and returns a dictionary containing the necessary data from the block: a list of hashes of transactions (transaction_hashes), the hash of the previous block (hash_previous_block), and the nonce (nonce).
-2. Get hash
+   - Error handling: None   
+
+2. `Get hash`
    - Input: acts on Block
    - Output: hashed JSON data
    - Purpose: This method calculates the current block's hash by first converting the block's data into a dictionary using the Get Dictionary method, then serializing that dictionary to a JSON-formatted string, and finally hashing the JSON string using the imported hash function. The resulting hash is the one associated with the current block.
+   - Error handling: None
 
 ##### 1.2.b Generation of the Genesis block with an initial value of Hash, Transaction, Nonce
 
 <br>
 
 #### 1.3 Transactions
+
+##### 1.3.a "UTXO" class
+
+This code defines a UTXO class representing a type of transaction output commonly used in blockchain systems. The class has methods to obtain the UTXO's attributes as a dictionary and to calculate a hash value based on these attributes.
+
+**Modules called:**
+
+1. JSON encoder module
+2. Module that provides a hash function:
+   - encode string to UTF-8
+   - hash object
+   - encode to base64
+   - decode to UTF-8
+
+**Attributes:**
+
+- Hash of transaction
+- Public key
+- Message
+
+**Methods:**
+
+1. `Get Dictionary`
+   - Input: acts on UTXO
+   - Output: Dictionary (originally: Python format)
+   - Purpose: This method returns a dictionary containing the UTXO's attributes (tx_hash, public_key, and message) as key-value pairs. The method creates the dictionary using the current instance's attribute values.
+   - Error handling: None
+
+2. `Get Hash`
+   - Input: acts on UTXO
+   - Output: hashed value of UTXO's dictionary
+   - Purpose: This method calculates a hash value for the dictionary representation of the UTXO. It calls the Get Dictionary (see 1. above) method to obtain the UTXO's attribute dictionary. It then converts the dictionary to a JSON string using json.dumps. The resulting JSON string is passed to the hashing.hash function (provided by the hashing module) to compute a hash value. The calculated hash value is returned as the result of the Get Hash method.
+   - Error handling: None
+
+##### 1.3.b "Unsigned Transaction" class
+
+This code defines a Unsigned Transaction class for managing transactions in an unsigned state. It includes methods for generating a dictionary and JSON representation of the transaction data, calculating a hash, and signing the transaction with a digital signature. 
+
+**Modules called:**
+
+1. JSON encoder module
+2. Module that provides a hash function:
+   - encode string to UTF-8
+   - hash object
+   - encode to base64
+   - decode to UTF-8
+3. UTXO classes
+
+**Attributes:**
+
+The constructor takes several parameters:
+   - UTXOs
+   - receiver's public keys
+   - messages
+
+The constructor performs a series of assertions to ensure that the provided data meets certain conditions:
+   - receiver's public keys and messages must be lists of the same length, both with a length greater than 0.
+   - UTXOs must be a list of non-zero length containing instances of the UTXO class.
+   - All UTXOs in the UTXOs list must have the same public key.
+If the provided data passes these assertions, the constructor sets instance variables for the transaction.
+
+**Methods:**
+
+1. `Get Dictionary`
+   - Input: acts on Transaction
+   - Output: Dictionary (originally: Python format)
+   - Purpose: This method converts the transaction's attributes into a dictionary format, which includes information about UTXOs, receiver public keys, and messages. It iterates through the utxos list and converts each UTXO into a dictionary using the Get Dictionary method of the UTXO class. The resulting dictionary contains the UTXO data, receiver public keys, and messages.
+   - Error handling: None
+
+2. `Get JSON`
+   - Input: acts on Transaction
+   - Output: JSON-formatted string
+   - Purpose: This method converts the dictionary obtained from Get Dictionary method into a JSON-formatted string using json.dumps.
+   - Error handling: None
+
+3. `Get Hash`
+   - Input: acts on Transaction
+   - Output: hashed value of Get JSON result
+   - Purpose: This method calculates a hash value for the JSON-formatted transaction data obtained from Get JSON.
+   - Error handling: None
+
+4. `Sign`
+   - Input: Private Key and Password
+   - Output: Signature
+   - Purpose: It calculates the hash of the transaction using the Get Hash method. It then calls the crypto.sign function to create a digital signature of the transaction hash using the provided private key and password. The resulting signature is returned.
+   - Error handling: Validate input private key and password strings are not empty or invalid. Handle errors for invalid key or password.
+
+
+##### 1.3.c "Transaction" class
+
+This code defines a Transaction class for managing and validating transactions involving UTXOs, digital signatures, and transaction data. The class includes methods to generate various representations of the transaction and to check its validity.
+
+**Modules called:**
+
+1. JSON encoder module
+2. Module that provides a hash function:
+   - encode string to UTF-8
+   - hash object
+   - encode to base64
+   - decode to UTF-8
+3. UTXO classes
+
+**Attributes:**
+
+The constructor takes several parameters:
+   - UTXOs
+   - receiver's public keys
+   - messages
+   - signature
+
+The constructor performs a series of assertions to ensure that the provided data meets certain conditions:
+   - receiver's public keys and messages must be lists of the same length, both with a length greater than 0.
+   - UTXOs must be a list of non-zero length containing instances of the UTXO class.
+   - All UTXOs in the UTXOs list must have the same public key.
+If the provided data passes these assertions, the constructor sets instance variables for the transaction.
+
+**Methods:**
+
+1. `Get Dictionary`
+   - Input: acts on Transaction
+   - Output: Dictionary (originally: Python format)
+   - Purpose: This method converts the transaction's attributes into a dictionary format, which includes information about UTXOs, receiver public keys, and messages. It iterates through the utxos list and converts each UTXO into a dictionary using the Get Dictionary method of the UTXO class. The resulting dictionary contains the UTXO data, receiver public keys, and messages.
+   - Error handling: None
+
+2. `Get JSON`
+   - Input: acts on Transaction
+   - Output: JSON-formatted string
+   - Purpose: This method converts the dictionary obtained from Get Dictionary method into a JSON-formatted string using json.dumps.
+   - Error handling: None
+
+3. `Get Hash`
+   - Input: acts on Transaction
+   - Output: hashed value of Get JSON result
+   - Purpose: This method calculates a hash value for the JSON-formatted transaction data obtained from Get JSON.
+   - Error handling: None
+
+4. `Get full JSON`
+   - Input: acts on Transaction
+   - Output: JSON-formatted dictionary
+   - Purpose: This method builds upon the data from Get Dictionary by adding the signature attribute to the dictionary. The resulting dictionary is converted to a JSON-formatted string using json.dumps.
+   - Error handling: None
+
+5. `Validity Check`
+   - Input: acts on Transaction
+   - Output: Boolean
+   - Purpose: This method checks the validity of the transaction. It uses the crypto.verify function to verify the digital signature of the transaction, which involves using the public key of the first UTXO and the calculated hash of the transaction. It calculates the total amount spent (sum of messages) and the total balance from the UTXOs (sum of message attribute of each UTXO). It checks if the balance is equal to the spent amount, ensuring that the transaction doesn't spend more than it has. The method returns True if the signature is valid and the amounts match, otherwise False.
+   - Error handling: None
+
+##### 1.3.d "Coinbase" class
+
+This code defines a Coinbase class that represents a Coinbase transaction in a cryptocurrency system. Coinbase transactions reward miners with a specific amount of cryptocurrency for successfully mining a new block. This class provides methods for generating a dictionary and JSON representation of the coinbase transaction data, calculating a hash, and indicating that the transaction is always valid.
+
+**Modules called:**
+
+1. JSON encoder module
+2. Module that provides a hash function:
+   - encode string to UTF-8
+   - hash object
+   - encode to base64
+   - decode to UTF-8
+3. UTXO classes
+
+**Attributes:**
+
+The constructor takes one parameter:
+   - receiver: which represents the public key of the receiver of the mining reward
+
+It initializes two instance variables:
+   - receiver_public_keys: A list containing the receiver's public key. In Coinbase transactions, there's typically only one receiver.
+   - messages: A list containing the amount of the reward. In the original code, it is set to [50], which typically represents a 50-unit reward in the cryptocurrency (e.g., 50 bitcoins in Bitcoin).
+
+**Methods:**
+
+1. `get_hash`
+   - Input: self
+   - Output: hash of JSON-formatted Dictionary (originally: Python format)
+   - Purpose: This method calculates a hash value for a JSON representation of the transaction data.
+   It constructs a dictionary containing the receiver's public key and the reward amount. It converts this dictionary into a JSON-formatted string using json.dumps. Finally, it calculates the hash of this JSON string using the hashing.hash function and returns the result.
+   - Error handling: None
+
+2. `is_valid`
+   - Input: self
+   - Output: boolean
+   - Purpose: This method always returns True. 
+   - Error handling: None
+
+3. `get_dict`
+   - Input: self
+   - Output: Dictionary
+   - Purpose: This method constructs a dictionary containing the receiver's public key and the reward amount. It returns this dictionary.
+   - Error handling: None
+
+4. `get_json`
+   - Input: self
+   - Output: JSON-formatted dictionary
+   - Purpose: This method converts the dictionary obtained from get_dict into a JSON-formatted string using json.dumps. It returns the JSON-formatted string.
+   - Error handling: None
+
 
 #### 1.4 Wallets
 
