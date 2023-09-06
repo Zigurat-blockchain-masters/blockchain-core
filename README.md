@@ -31,7 +31,7 @@ yarn install
 
 ## Running the tests
 
-Please note we don't have any tests yet.
+To run the tests, run the following command (it will automatically run all the tests under the `test` directory)
 
 ```
 npm run test
@@ -45,4 +45,5 @@ npm run test
 * [yarn](https://yarnpkg.com/en/) - Package manager
 * [TypeScript](https://www.typescriptlang.org/) - JavaScript superset
 * [Jest](https://jestjs.io/) - Testing framework
+* [Chai](https://www.chaijs.com/) - Assertion library
 * [ESLint](https://eslint.org/) - Linting utility
