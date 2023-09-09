@@ -1,21 +1,20 @@
-import { UTXO } from 'UTXO';
-import { block } from 'block';
-import { miningTarget } from 'CONFIG';
-import { transaction } from 'transaction';
-import { genesisCoinbase } from 'genesisCoinbase';
+const UTXO = require('./UTXO');
+import {miningTarget} from '../src/CONFIG'
+import {Transaction} from "../src/transaction"
+// const genesisCoinbase = require('./genesisCoinbase');
+import Block from './block';
+
 
 let currentBlockchain
 
 export const getBlockchain = () => {
-  if (currentBlockchain === undefined) {
-    currentBlockchain = new Blockchain()
-  }
-  return currentBlockchain
-}
+  return currentBlockchain ? currentBlockchain : (currentBlockchain = new Blockchain());
+};
+
 
 export class Blockchain{
   constructor(){
-    this.chain = [genesisCoinbase]
+    this.chain = [new Block("ZEvMflZDcwQJmarInnYi88px+6HZcv2Uoxw7+/JOOTg=", ["test"], 0)]
   }
 
 
@@ -24,7 +23,8 @@ export class Blockchain{
       return false;
     }   
     for (let tx of block.transactions) {
-      if (!tx.isValid()) {
+      const newTx = new Transaction(tx);
+      if (!newTx.isValid()) {
         return false;
       }
       if (tx instanceof Transaction) {
@@ -43,8 +43,8 @@ export class Blockchain{
   }
 
   isChainValid(){
+    if (this.chain.length === 1) {throw new Error("Chain only contains the genesis block")}
     for(let i = 1; i < this.chain.length; i++){
-      if (this.chain.length === 1) {throw new Error("Chain only contains the genesis block")}
 
       const currentBlock = this.chain[i];
       const previousBlock = this.chain[i - 1]
@@ -69,6 +69,9 @@ export class Blockchain{
 
 
   checkAgainstTarget(miningTarget, hash) {
+    if (typeof miningTarget !== 'number' || miningTarget <= 0 || typeof hash !== 'string') {
+      throw new Error('Invalid arguments');
+    }
     const targetPrefix = '0'.repeat(miningTarget);
     return hash.startsWith(targetPrefix);
   }
@@ -111,7 +114,7 @@ export class Blockchain{
   
 
   getJson() {
-    const blocks = this.chain.map(block => block.toJSON());
+    const blocks = this.chain.map(block => JSON.stringify(block));
     return JSON.stringify({
       blocks
     });
