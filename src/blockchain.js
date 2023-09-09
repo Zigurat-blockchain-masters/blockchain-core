@@ -13,7 +13,7 @@ export const getBlockchain = () => {
   return currentBlockchain
 }
 
-class Blockchain{
+export class Blockchain{
   constructor(){
     this.chain = [genesisCoinbase]
   }

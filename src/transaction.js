@@ -136,3 +136,10 @@ class Coinbase {
         return JSON.stringify(this.getDict());
     }
 }
+
+
+module.exports = {
+    Transaction,
+    UnsignedTransaction,
+    Coinbase
+}

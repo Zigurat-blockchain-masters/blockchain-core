@@ -8,7 +8,7 @@ const { miningTarget } = require('./CONFIG');
 const randomNonce = Math.floor(Math.random() * 16)
 const publicKey = process.env.PUBLIC_KEY;
 
-class Miner {
+export default class Miner {
   constructor(minerPublicKey) {
     this.publicKey = minerPublicKey;
     this.mine();

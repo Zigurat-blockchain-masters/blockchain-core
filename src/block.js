@@ -1,6 +1,6 @@
 import { hash } from './hashing'; // replace with actual path
 
-class Block {
+export default class Block {
     constructor(hash_previous_block, transactions, nonce) {
         this.transactions = transactions;
         this.hash_previous_block = hash_previous_block;
