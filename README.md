@@ -37,6 +37,20 @@ To run the tests, run the following command (it will automatically run all the t
 npm run test
 ```
 
+## Generate code coverage report
+
+To generate code coverage report, run the following command
+
+```
+npm run test:coverage
+```
+
+or using yarn
+
+```
+yarn test:coverage
+```
+
 
 ## Built With
 
