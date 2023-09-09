@@ -32,6 +32,9 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@babel/core": "^7.22.17",
+    "@babel/preset-env": "^7.22.15",
+    "babel-jest": "^29.6.4",
     "body-parser": "1.20.2",
     "chai": "^4.3.8",
     "crypto-hash": "^2.0.1",
