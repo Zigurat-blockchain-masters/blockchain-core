@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs'; // Import the fs m
 import { getMempool } from './Mempool';
 import { Transaction, unsnigedTransaction } from './Transaction';
 
-class Wallet {
+export default class Wallet {
     constructor() {
         if (existsSync('private_key.json')) {
             const { privateKey, password } = this.loadFromFile();

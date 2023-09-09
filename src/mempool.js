@@ -2,7 +2,7 @@ const { transaction } = require("./transaction"); // Replace with actual path
 
 let mempool = null;
 
-class Mempool {
+export default class Mempool {
   constructor() {
     this.tx = [];
   }
@@ -21,8 +21,3 @@ function getMempool() {
   }
   return mempool;
 }
-
-module.exports = {
-  transaction,
-  Mempool
-};
