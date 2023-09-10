@@ -1,14 +1,14 @@
-require('dotenv').config();
-const hashing = require('./hashing');
-const { getMempool } = require('./mempool');
-const block = require('./block');
-const { getBlockchain } = require('./blockchain');
-const { coinbase, transaction } = require('./transaction');
-const { miningTarget } = require('./CONFIG');
-const randomNonce = Math.floor(Math.random() * 16)
-const publicKey = process.env.PUBLIC_KEY;
+import dotenv from 'dotenv';
+import hashing from './hashing';
+import { getMempool } from './mempool';
+import Block from './block';
+import { getBlockchain } from './blockchain';
+import { Coinbase, Transaction } from './transaction';
+import { miningTarget } from './CONFIG';
 
-export default class Miner {
+dotenv.config();
+
+class Miner {
   constructor(minerPublicKey) {
     this.publicKey = minerPublicKey;
     this.mine();
@@ -16,46 +16,47 @@ export default class Miner {
 
   checkAgainstTarget(hashString) {
     const hex = hashing.stringToHex(hashString);
-    return hex.startsWith("0".repeat(miningTarget));
+    return hex.startsWith('0'.repeat(miningTarget));
   }
 
   mine() {
-    const topmostBlock = getBlockchain().getTopmostBlock();
-    if (!(topmostBlock instanceof block)) {
-      throw new Error("Invalid topmost block");
-    }
-
-    const hashPrev = topmostBlock.getHash();
-
-    const mempool = getMempool();
-
-    const filteredTxs = mempool.tx.filter((tx) => {
-      return (tx instanceof transaction || tx instanceof coinbase) && tx.isValid();
-    });
-
-    const coinbaseInstance = new coinbase(this.publicKey);
-
-    txs.unshift(coinbaseInstance);
-
-    while (true) {
-      const block = new block(
-          hashPrev,
-          txs,
-          randomNonce
-      );
-
-      const hash = block.getHashes();
-      const check = this.checkAgainstTarget(hash);
-
-      if (check) {
-        const success = getBlockchain().insertBlock(block);
-        if (success) {
-          console.log(JSON.stringify(getBlockchain().getJson()));
-        }
-        break;
+    try {
+      const topmostBlock = getBlockchain().getTopmostBlock();
+      if (!(topmostBlock instanceof Block)) {
+        throw new Error('Invalid topmost block');
       }
+
+      const hashPrev = topmostBlock.getHash();
+
+      const mempool = getMempool();
+
+      const filteredTxs = mempool.transactions.filter((tx) => {
+        return (tx instanceof Transaction || tx instanceof Coinbase) && tx.isValid();
+      });
+
+      const coinbaseInstance = new Coinbase(this.publicKey);
+
+      filteredTxs.unshift(coinbaseInstance);
+
+      let foundValidBlock = false;
+      for (let randomNonce = 0; !foundValidBlock && randomNonce < 16; randomNonce++) {
+        const newBlock = new Block(hashPrev, filteredTxs, randomNonce);
+
+        const hash = newBlock.getHash();
+        const check = this.checkAgainstTarget(hash);
+
+        if (check) {
+          foundValidBlock = getBlockchain().insertBlock(newBlock);
+          if (foundValidBlock) {
+            console.log(JSON.stringify(getBlockchain().getJson()));
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error during mining:', error.message);
     }
   }
 }
 
+const publicKey = process.env.PUBLIC_KEY;
 const miner = new Miner(publicKey);
