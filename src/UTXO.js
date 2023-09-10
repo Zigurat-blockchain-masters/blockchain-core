@@ -7,15 +7,7 @@ export default class UTXO {
         this.message = message;
     }
 
-    getDict() {
-        return {
-            "tx_hash": this.tx_hash,
-            "public_key": this.public_key,
-            "message": this.message
-        };
-    }
-
     getHash() {
-        return hash(JSON.stringify(this.getDict()));
+        return hash(JSON.stringify(this));
     }
 }
