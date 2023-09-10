@@ -1,119 +1,131 @@
-import { UTXO } from 'UTXO';
-import { block } from 'block';
-import { miningTarget } from 'CONFIG';
-import { transaction } from 'transaction';
-import { genesisCoinbase } from 'genesisCoinbase';
+import {UTXO} from 'UTXO';
+import {block} from 'block';
+import {miningTarget} from 'CONFIG';
+import {transaction} from 'transaction';
+import {genesisCoinbase} from 'genesisCoinbase';
 
 let currentBlockchain
 
 export const getBlockchain = () => {
-  if (currentBlockchain === undefined) {
-    currentBlockchain = new Blockchain()
-  }
-  return currentBlockchain
+    if (currentBlockchain === undefined) {
+        currentBlockchain = new Blockchain()
+    }
+    return currentBlockchain
 }
 
-export class Blockchain{
-  constructor(){
-    this.chain = [genesisCoinbase]
-  }
+export class Blockchain {
+    constructor() {
+        this.chain = [genesisCoinbase]
+    }
 
 
-  insertBlock(block) {
-    if (!(block instanceof Block)) {
-      return false;
-    }   
-    for (let tx of block.transactions) {
-      if (!tx.isValid()) {
-        return false;
-      }
-      if (tx instanceof Transaction) {
-        for (let utxo of tx.utxos) {
-          if (!this.isValidUTXO(utxo)) {
-            return false;
-          }
+    insertBlock(block) {
+        if (!(block instanceof Block)) {
+            throw new Error("Invalid block type");
         }
-      }
-    }
-    if (!this.checkAgainstTarget(miningTarget, block.getHash())) {
-      return false;
-    }
-    this.chain.push(block);
-    return true;
-  }
 
-  isChainValid(){
-    for(let i = 1; i < this.chain.length; i++){
-      if (this.chain.length === 1) {throw new Error("Chain only contains the genesis block")}
-
-      const currentBlock = this.chain[i];
-      const previousBlock = this.chain[i - 1]
-
-      if(!currentBlock.hasValidTransactions()){
-        return false
-      }   
-      if(currentBlock.hash != currentBlock.calculateHash()){
-        return false;
-      }
-      if(currentBlock.previousHash != previousBlock.hash){        
-        return false;
-      }
-    return true
-    }
-  }
- 
-
-  getLatestBlock(){
-    return this.chain[this.chain.length - 1]
-  }
-
-
-  checkAgainstTarget(miningTarget, hash) {
-    const targetPrefix = '0'.repeat(miningTarget);
-    return hash.startsWith(targetPrefix);
-  }
-
-  
-  getUTXOs(publicKey) {
-    const utxos = [];
-    for (const block of this.chain) {
-      for (const tx of block.transactions) {
-        let counter = 0;
-        for (const pk of tx.receiverPublicKeys) {
-          if (pk === publicKey) {
-            const utxo = new UTXO(tx.getHash(), publicKey, tx.messages[counter]);
-            utxos.push(utxo);
-          }
-          counter++;
+        if (!Array.isArray(block.transactions)) {
+            throw new Error("Missing or invalid transactions array");
         }
-      }
-    }
-    return utxos;
-  }
 
+        for (let tx of block.transactions) {
+            if (!(tx instanceof Transaction) || !tx.isValid()) {
+                throw new Error("Invalid transaction");
+            }
 
-  isValidUTXO(UTXO) {
-    for (const block of this.chain) {
-      for (const tx of block.transactions) {
-        if (tx.getHash() === UTXO.txHash) {
-          const index = tx.receiverPublicKeys.indexOf(UTXO.publicKey);
-          if (index !== -1 && UTXO.message === tx.messages[index]) {
-            // UTXO found with matching transaction hash, public key, and message
-            return true;
-          }
+            for (let utxo of tx.utxos) {
+                if (!this.isValidUTXO(utxo)) {
+                    throw new Error("Invalid UTXO");
+                }
+            }
         }
-      }
+
+        if (!this.checkAgainstTarget(miningTarget, block.getHash())) {
+            throw new Error("Block does not meet mining target");
+        }
+
+        this.chain.push(block);
+        return true; // Block successfully inserted
     }
 
-    // UTXO not found in any transactions, invalid
-    return false;
-  }
-  
+    
+    isChainValid() {
+        const chainLength = this.chain.length;
 
-  getJson() {
-    const blocks = this.chain.map(block => block.toJSON());
-    return JSON.stringify({
-      blocks
-    });
-  }
+        if (chainLength === 0) {
+            return true; // An empty chain is considered valid
+        }
+
+        for (let i = 1; i < chainLength; i++) {
+            const currentBlock = this.chain[i];
+            const previousBlock = this.chain[i - 1];
+
+            // Check if currentBlock and previousBlock exist
+            if (!currentBlock || !previousBlock) {
+                return false; // Invalid block(s) in the chain
+            }
+
+            // Check block integrity
+            if (!currentBlock.hasValidTransactions() ||
+                currentBlock.hash !== currentBlock.calculateHash() ||
+                currentBlock.previousHash !== previousBlock.hash) {
+                return false; // Chain is invalid if any condition fails
+            }
+        }
+
+        return true; // If all blocks are valid, the chain is valid
+    }
+
+
+    getLatestBlock() {
+        return this.chain.length > 0 ? this.chain[this.chain.length - 1] : null;
+    }
+
+    checkAgainstTarget(miningTarget, hash) {
+        const targetPrefix = '0'.repeat(miningTarget);
+        return hash.startsWith(targetPrefix);
+    }
+
+
+    getUTXOs(publicKey) {
+        try {
+            return this.chain.reduce((utxos, block) => {
+                block.transactions.forEach((tx) => {
+                    tx.receiverPublicKeys.forEach((pk, index) => {
+                        if (pk === publicKey) {
+                            utxos.push(new UTXO(tx.getHash(), publicKey, tx.messages[index]));
+                        }
+                    });
+                });
+                return utxos;
+            }, []);
+        } catch (error) {
+            console.error("An error occurred while retrieving UTXOs:", error);
+            return []; // Return an empty array on error
+        }
+    }
+
+
+    isValidUTXO(utxo) {
+        try {
+            for (const block of this.chain) {
+                for (const tx of block.transactions) {
+                    const index = tx.receiverPublicKeys.indexOf(utxo.publicKey);
+                    if (tx.getHash() === utxo.txHash && index !== -1 && utxo.message === tx.messages[index]) {
+                        return true; // UTXO found with matching properties
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("An error occurred while validating UTXO:", error);
+        }
+
+        return false; // UTXO not found in any transactions, invalid (or error thrown)
+    }
+
+
+    getJson() {
+        const blocks = this.chain.map(block => block.toJSON());
+        return JSON.stringify({blocks});
+    }
 }
