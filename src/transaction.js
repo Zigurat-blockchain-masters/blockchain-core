@@ -1,5 +1,5 @@
-import { verify } from 'crypto'; // Assuming crypto module is available
-import { hash as _hash } from './hashing'; // Assuming hashing module is available
+import {verify} from 'crypto'; // Assuming crypto module is available
+import {hash as _hash} from './hashing'; // Assuming hashing module is available
 import UTXO from './UTXO'; // Assuming UTXO module is available
 
 class Transaction {
@@ -125,11 +125,10 @@ class Coinbase {
     }
 
     getDict() {
-        const data = {
+        return {
             "receiver_public_keys": this.receiver_public_keys,
             "messages": this.messages
         };
-        return data;
     }
 
     getJson() {

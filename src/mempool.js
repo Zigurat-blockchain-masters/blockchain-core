@@ -1,21 +1,21 @@
-const { transaction } = require("./transaction"); // Replace with actual path
+import Transaction from "./transaction"; // Replace with the actual path
 
 let mempool = null;
 
 export default class Mempool {
   constructor() {
-    this.tx = [];
+    this.transactions = [];
   }
 
-  insertTransaction(tx) {
-    if (!(tx instanceof transaction) || !tx.isValid()) {
+  insertTransaction(transaction) {
+    if (!(transaction instanceof Transaction) || !transaction.isValid()) {
       throw new Error("Invalid transaction");
     }
-    this.tx.push(tx);
+    this.transactions.push(transaction);
   }
 }
 
-function getMempool() {
+export function getMempool() {
   if (mempool === null) {
     mempool = new Mempool();
   }
