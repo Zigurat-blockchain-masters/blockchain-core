@@ -1,1 +1,1 @@
-miningTarget = 1
+export const miningTarget=1
