@@ -1,7 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { getMempool } from './Mempool';
-import { Transaction, UnsignedTransaction } from './Transaction';
-import { getBlockchain } from './Blockchain';
+import { getMempool } from './mempool';
+import { Transaction, UnsignedTransaction } from './transaction';
+import { getBlockchain } from './blockchain';
+import * as cryptography from './cryptography';
 
 export default class Wallet {
     constructor() {
@@ -14,11 +15,11 @@ export default class Wallet {
             this.privateKey = privateKey;
             this.password = password;
         } else {
-            this.password = this.generatePassword();
-            this.privateKey = this.generatePrivatePemString(this.password);
+            this.password = cryptography.generatePassword();
+            this.privateKey = cryptography.generatePrivatePemString(this.password);
             this.saveToFile();
         }
-        this.publicKey = this.generatePublicPemString(this.privateKey, this.password);
+        this.publicKey = cryptography.generatePublicPemString(this.privateKey, this.password);
     }
 
     sendMoney(receiverPks, msgs) {
@@ -29,7 +30,7 @@ export default class Wallet {
     }
 
     getUTXOs(money) {
-        const publicKey = this.generatePublicPemString(this.privateKey, this.password);
+        const publicKey = cryptography.generatePublicPemString(this.privateKey, this.password);
         const blockchain = getBlockchain();
         const utxos = blockchain.getUTXOs(publicKey);
 
@@ -91,17 +92,5 @@ export default class Wallet {
             console.error(`Could not load the file from disk, error: ${error.message}`);
             throw error;
         }
-    }
-
-    generatePassword() {
-        // TODO reuse hashing.js
-    }
-
-    generatePrivatePemString(password) {
-        // TODO reuse hashing.js
-    }
-
-    generatePublicPemString(privateKey, password) {
-        // TODO reuse hashing.js
     }
 }
