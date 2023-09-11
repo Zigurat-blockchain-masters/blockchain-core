@@ -1,6 +1,6 @@
-import Wallet from '../src/Wallet'; // Import your Wallet class from the appropriate path
-import { getMempool } from '../src/Mempool'; // Import the getMempool function from the appropriate path
-import { getBlockchain } from '../src/Blockchain'; // Import the getBlockchain function from the appropriate path
+const Wallet = require('../src/wallet');
+const getMempool = require('../src/mempool');
+const getBlockchain = require('../src/blockchain');
 
 jest.mock('fs'); // Mock the fs module to simulate file operations
 

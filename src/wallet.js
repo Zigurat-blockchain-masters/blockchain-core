@@ -1,10 +1,10 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs'; // Import the fs module for file operations
-import { getMempool } from './Mempool';
-import { Transaction, unsnigedTransaction } from './Transaction';
+const fs = require('fs'); // Import the fs module for file operations
+const getMempool = require('../src/mempool');
+const transaction = require('../src/transaction');
 
 export default class Wallet {
     constructor() {
-        if (existsSync('private_key.json')) {
+        if (fs.existsSync('private_key.json')) {
             const { privateKey, password } = this.loadFromFile();
             this.privateKey = privateKey;
             this.password = password;
@@ -75,7 +75,7 @@ export default class Wallet {
         }
 
         try {
-            writeFileSync('private_key.json', JSON.stringify(data));
+            fs.writeFileSync('private_key.json', JSON.stringify(data));
         } catch (error) {
             console.error("Could not write file to disk");
             console.error(error); // Print the error details for debugging
@@ -84,7 +84,7 @@ export default class Wallet {
 
     loadFromFile() {
         try {
-            const fileData = readFileSync('private_key.json', 'utf8');
+            const fileData = fs.readFileSync('private_key.json', 'utf8');
             const data = JSON.parse(fileData);
             return { privateKey: data.privateKey, password: data.password };
         } catch (error) {
