@@ -1,6 +1,7 @@
 const fs = require('fs'); // Import the fs module for file operations
-const getMempool = require('../src/mempool');
-const transaction = require('../src/transaction');
+const getMempool = require('./mempool');
+const transaction = require('./transaction');
+const crypto = require('./cryptography');
 
 export default class Wallet {
     constructor() {
@@ -9,11 +10,11 @@ export default class Wallet {
             this.privateKey = privateKey;
             this.password = password;
         } else {
-            this.password = this.generatePassword();
-            this.privateKey = this.generatePrivatePemString(this.password);
+            this.password = crypto.generatePassword();
+            this.privateKey = crypto.generatePrivatePemString(this, this.password);
             this.saveToFile();
         }
-        this.publicKey = this.generatePublicPemString(this.privateKey, this.password);
+        this.publicKey = crypto.generatePublicPemString(this.privateKey, this.password);
     }
 
     sendMoney(receiverPks, msgs) {
@@ -64,8 +65,8 @@ export default class Wallet {
 
     saveToFile() {
         const data = {
-            privateKey: this.privateKey,
-            password: this.password
+            password : crypto.generatePassword(),
+            privateKey : crypto.generatePrivatePemString(this, this.password)
         };
 
         // Check if private key and password are not empty before saving to file
@@ -92,3 +93,6 @@ export default class Wallet {
         }
     }
 }
+
+
+const wallet = new Wallet();
