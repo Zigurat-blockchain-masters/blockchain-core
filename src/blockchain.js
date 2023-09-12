@@ -1,8 +1,8 @@
-const UTXO = require('./UTXO');
+import Block from './block';
+import UTXO from '../src/UTXO'
 import {miningTarget} from '../src/CONFIG'
 import {Transaction} from "../src/transaction"
 // const genesisCoinbase = require('./genesisCoinbase');
-import Block from './block';
 
 
 let currentBlockchain
@@ -27,39 +27,20 @@ export class Blockchain{
       if (!newTx.isValid()) {
         return false;
       }
-      if (tx instanceof Transaction) {
-        for (let utxo of tx.utxos) {
-          if (!this.isValidUTXO(utxo)) {
-            return false;
-          }
-        }
-      }
+      // temporarily removed, cant compare UTXOs with UTXOs on the blockchain if the block hasn't been added, will always FALSE
+      // if (tx instanceof Transaction) {
+      //   for (let utxo of tx.utxos) {
+      //     if (!this.isValidUTXO(utxo)) {
+      //       return false;
+      //     }
+      //   }
+      // }
     }
     if (!this.checkAgainstTarget(miningTarget, block.getHash())) {
       return false;
     }
     this.chain.push(block);
     return true;
-  }
-
-  isChainValid(){
-    if (this.chain.length === 1) {throw new Error("Chain only contains the genesis block")}
-    for(let i = 1; i < this.chain.length; i++){
-
-      const currentBlock = this.chain[i];
-      const previousBlock = this.chain[i - 1]
-
-      if(!currentBlock.hasValidTransactions()){
-        return false
-      }   
-      if(currentBlock.hash != currentBlock.calculateHash()){
-        return false;
-      }
-      if(currentBlock.previousHash != previousBlock.hash){        
-        return false;
-      }
-    return true
-    }
   }
  
 
@@ -79,7 +60,8 @@ export class Blockchain{
   
   getUTXOs(publicKey) {
     const utxos = [];
-    for (const block of this.chain) {
+    for (let i = 1; i < this.chain.length; i++) {
+      const block = this.chain[i];
       for (const tx of block.transactions) {
         let counter = 0;
         for (const pk of tx.receiverPublicKeys) {
@@ -101,14 +83,11 @@ export class Blockchain{
         if (tx.getHash() === UTXO.txHash) {
           const index = tx.receiverPublicKeys.indexOf(UTXO.publicKey);
           if (index !== -1 && UTXO.message === tx.messages[index]) {
-            // UTXO found with matching transaction hash, public key, and message
             return true;
           }
         }
       }
     }
-
-    // UTXO not found in any transactions, invalid
     return false;
   }
   

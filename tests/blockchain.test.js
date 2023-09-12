@@ -1,6 +1,7 @@
 import { getBlockchain, Blockchain } from '../src/blockchain'; // Adjust the path as needed
 import Block from "../src/block"
-import transaction from "../src/transaction"
+import { Transaction } from "../src/transaction"
+import UTXO from "../src/UTXO"
 
 let miningTarget = 2
 
@@ -11,7 +12,6 @@ describe('Blockchain Module', () => {
             expect(chain).toBeDefined();
             expect(chain).toBeInstanceOf(Blockchain);
         });
-        
         it('should not create a new instance if there is an active one', () => {
             let newChain = getBlockchain();
             expect(newChain).toBe(chain);
@@ -29,11 +29,6 @@ describe('Blockchain Module', () => {
             };  
             expect(insertInvalidBlock).toThrow("Invalid input parameters");
           });
-    })
-
-    describe('isChainValid function', () => {
-        it('should not receive inputs other than Blocks', () => {
-        });
     })
 
     describe('getLatestBlock function', () => {
@@ -54,7 +49,7 @@ describe('Blockchain Module', () => {
                 chain.checkAgainstTarget( "testString")};  
             expect(testString).toThrow("Invalid arguments");
         });
-        it('should not receive hashes that dont comply with the miningTarget', () => {
+        it('should fail with hashes that dont start with the miningTarget', () => {
             const testString = chain.checkAgainstTarget(miningTarget, "xxx");
             expect(testString).toBe(false);            
             const testString1 = chain.checkAgainstTarget(miningTarget, "0xxx");
@@ -67,13 +62,20 @@ describe('Blockchain Module', () => {
     })
 
     // describe('getUTXOs function', () => {
-    //     it('should not receive inputs other than Blocks', () => {
+    //     it('should bring an array of valid results', () => {
+    //         const blockchain = getBlockchain()
+    //         const utxos = [new UTXO('tx_hash', 'public_key', 'message')];
+    //         const tx = new Transaction(utxos, ['0x12345'], ['messages'], 'signature')
+    //         blockchain.chain.push(new Block('hash_previous_block', tx , 'nonce'))
+    //         console.log(blockchain.chain);
+    //         const r = blockchain.getUTXOs('0x12345')         
     //     });
     // })
 
     
     // describe('isValidUTXO function', () => {
-    //     it('should not receive inputs other than Blocks', () => {
+    //     it('should only allow valid UTXOs', () => {
+    //         const block = 
     //     });
     // })
 
