@@ -75,7 +75,8 @@ describe('Block', () => {
 
             const block = new Block(samplePreviousHash, sampleTransactions, sampleNonce);
             
-            // Calculate the expected dictionary representation
+
+            // Build the expected dictionary representation
             const expectedData = {
                 "transaction_hashes": [hashing.hash(sampleTransactions[0]),hashing.hash(sampleTransactions[1])],
                 "hash_previous_block": samplePreviousHash,

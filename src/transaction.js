@@ -1,6 +1,6 @@
-import { verify } from './cryptography'; // Assuming crypto module is available
-import { hash as _hash } from './hashing'; // Assuming hashing module is available
-import UTXO from './UTXO'; // Assuming UTXO module is available
+import { verify } from './cryptography'; 
+import { hash as _hash } from './hashing'; 
+import UTXO from './UTXO'; 
 
 class Transaction {
     constructor(utxos, receiver_public_keys, messages, signature) {
