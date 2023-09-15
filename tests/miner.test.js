@@ -1,17 +1,9 @@
 import Miner from "../src/miner";
 const hashing = require('../src/hashing');
 
-// import { Miner as miner } from "../src/miner";
-import { Block as block } from "../src/block";
-import { Blockchain as blockchain, getBlockchain } from "../src/blockchain";
-import { Mempool as mempool } from"../src/mempool";
-
 describe('Miner Module', () => {
 
     let miner;
-    let block;
-    let blockchain;
-    let mempool;
 
     beforeEach(() => {
         jest.mock('../src/block', () => ({

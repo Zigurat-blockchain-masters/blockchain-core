@@ -1,14 +1,13 @@
-// require('dotenv').config();
+require('dotenv').config();
 const hashing = require('../src/hashing');
 import { getBlockchain } from './blockchain';
 import { Block } from '../src/Block';
-
-// const { getMempool } = require('../src/mempool');
-// const { getBlockchain } = require('../src//blockchain');
-// const { coinbase, transaction } = require('../src/transaction');
-// const randomNonce = Math.floor(Math.random() * 16)
-// const publicKey = process.env.PUBLIC_KEY;
-// const { Block } = require('../src/block');
+const { getMempool } = require('../src/mempool');
+const { getBlockchain } = require('../src//blockchain');
+const { coinbase, transaction } = require('../src/transaction');
+const randomNonce = Math.floor(Math.random() * 16)
+const publicKey = process.env.PUBLIC_KEY;
+const { Block } = require('../src/block');
 
 export default class Miner {
   constructor(minerPublicKey) {
@@ -65,4 +64,4 @@ export default class Miner {
   }
 }
 
-const miner = new Miner("TestKey");
+const miner = new Miner(publicKey);
