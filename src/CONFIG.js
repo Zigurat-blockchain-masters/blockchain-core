@@ -1,1 +1,1 @@
-miningTarget = 1
+miningtarget = 1

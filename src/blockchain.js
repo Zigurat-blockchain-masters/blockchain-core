@@ -1,8 +1,5 @@
-import { UTXO } from 'UTXO';
-import { block } from 'block';
-import { miningTarget } from 'CONFIG';
-import { transaction } from 'transaction';
-import { genesisCoinbase } from 'genesisCoinbase';
+import { UTXO } from '../src/UTXO';
+import { genesisCoinbase } from '../src/transaction';
 
 let currentBlockchain
 

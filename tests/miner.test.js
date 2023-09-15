@@ -3,24 +3,9 @@ const { transaction, coinbase } = require('../src/transaction');
 const { block } = require('../src/block');
 const { getMempool } = require('../src/mempool');
 const { getBlockchain } = require('../src/blockchain');
-const { miningTarget } = require('../src/CONFIG');
-
-jest.mock('../src/block', () => ({
-    block: jest.fn(),
-}));
-
-jest.mock('../src/mempool', () => ({
-    getMempool: jest.fn(),
-}));
-
-jest.mock('../src/transaction', () => ({
-    coinbase: jest.fn(),
-    transaction: jest.fn(),
-}));
-
-jest.mock('../src/blockchain', () => ({
-    getBlockchain: jest.fn(),
-}));
+// import Blockchain from "../src/blockchain";
+// const { miningtarget } = require('../src/CONFIG');
+// import miningtarget from "../src/CONFIG";
 
 const hashing = {
     stringToHex: jest.fn(),
@@ -29,8 +14,27 @@ const hashing = {
 describe('Miner Module', () => {
     // Initialize a new mock miner instance for each test
     let mockMiner;
+
     beforeEach(() => {
-        mockMiner = new miner(miningTarget);
+        jest.mock('../src/block', () => ({
+            block: jest.fn(),
+            getHash: jest.fn()
+        }));
+
+        jest.mock('../src/mempool', () => ({
+            getMempool: jest.fn(),
+        }));
+
+        jest.mock('../src/transaction', () => ({
+            coinbase: jest.fn(),
+            transaction: jest.fn(),
+        }));
+
+        jest.mock('../src/blockchain', () => ({
+            getBlockchain: jest.fn(),
+        }));
+
+        mockMiner = new miner(1);
     });
 
     // Test case 1: hashString meets the mining target

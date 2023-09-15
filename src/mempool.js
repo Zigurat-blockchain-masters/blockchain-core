@@ -1,5 +1,3 @@
-const { transaction } = require("./transaction"); // Replace with actual path
-
 let mempool = null;
 
 export default class Mempool {
@@ -7,11 +5,11 @@ export default class Mempool {
     this.tx = [];
   }
 
-  insertTransaction(tx) {
-    if (!(tx instanceof transaction) || !tx.isValid()) {
+  insertTransaction(receivedTx) {
+    if (!(receivedTx.isValid)) {
       throw new Error("Invalid transaction");
     }
-    this.tx.push(tx);
+    this.tx.push(receivedTx);
   }
 }
 

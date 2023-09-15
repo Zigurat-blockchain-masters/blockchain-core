@@ -1,10 +1,8 @@
 require('dotenv').config();
 const hashing = require('./hashing');
 const { getMempool } = require('./mempool');
-const block = require('./block');
 const { getBlockchain } = require('./blockchain');
 const { coinbase, transaction } = require('./transaction');
-const { miningTarget } = require('./CONFIG');
 const randomNonce = Math.floor(Math.random() * 16)
 const publicKey = process.env.PUBLIC_KEY;
 
@@ -16,16 +14,17 @@ export default class Miner {
 
   checkAgainstTarget(hashString) {
     const hex = hashing.stringToHex(hashString);
-    return hex.startsWith("0".repeat(miningTarget));
+    return hex.startsWith("0".repeat(1));
   }
 
   mine() {
-    const topmostBlock = getBlockchain().getTopmostBlock();
-    if (!(topmostBlock instanceof block)) {
-      throw new Error("Invalid topmost block");
-    }
+    const latestBlock = getBlockchain().getLatestBlock();
 
-    const hashPrev = topmostBlock.getHash();
+    // if (!(latestBlock instanceof Block.default)) {
+    //   throw new Error("Invalid latest block");
+    // }
+
+    const hashPrev = latestBlock.getHash();
 
     const mempool = getMempool();
 
