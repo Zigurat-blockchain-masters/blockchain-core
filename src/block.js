@@ -1,5 +1,5 @@
-//import { hash } from './hashing'; 
 const hashing = require('../src/hashing');
+import { hash } from './hashing'; 
 
 export default class Block {
     constructor(hash_previous_block, transactions, nonce) {
