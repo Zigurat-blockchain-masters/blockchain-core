@@ -1,4 +1,4 @@
-import { hash } from './hashing'; // replace with actual path
+import { hash } from './hashing'; 
 
 export default class Block {
     constructor(hash_previous_block, transactions, nonce) {
