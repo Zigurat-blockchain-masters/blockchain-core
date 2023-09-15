@@ -1,6 +1,6 @@
-const { Coinbase } = require('./transaction'); 
+const Genesis = require('../src/Genesis');
 
-const CREATORS_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+const expectedData = {"messages": [50], "receiver_public_keys": [`-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAl20HC7xKreGy16YVuvNQ
 heMJc62hLEs4S6iElS98cx6aHGJI3YAmahiB1uAdyX7unWtlwdeeKpdDtZ9b1XS9
 R/kJi1vuJcmwTVAnDUCXWKd681+x3iSxnYT7tfSTzwbo3GWeTxnul3rWkd6EO546
@@ -13,12 +13,15 @@ plnU1bmTfO1W7ynzIw5Ry5Td7o2RhSXyk6zCtYvtrHXQt4pflaWJzrq8h2TeKU/n
 G30sfQvpWy5KDLBI/71cZnqslChcQ6tnYSNStXS0o3aWhYAkIPI+ByKNiBKXX82V
 vQQ14WELBorYCiGiDginapgUC7uKIVaj0nLEBbyim1jrnCWhsGbBK41tF7bPBRo/
 8SHuIBtSTPi+L3MkAEfkklsCAwEAAQ==
------END PUBLIC KEY-----`;
+-----END PUBLIC KEY-----`]};
 
-function genesisCoinbase() {
-    return new Coinbase(CREATORS_PUBLIC_KEY);
-}
+describe('genesisCoinbase function', () => {
+    it('should return an instance of Coinbase with the provided public key and messages', () => {
+        const coinbase = Genesis.genesisCoinbase();
 
-module.exports = {
-    genesisCoinbase,
-};
+        expect(coinbase).toBeDefined(); 
+        expect(typeof coinbase).toBe('object');
+        expect(coinbase).toEqual(expectedData);
+    });
+});
+

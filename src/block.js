@@ -1,3 +1,4 @@
+const hashing = require('../src/hashing');
 import { hash } from './hashing'; 
 
 export default class Block {
@@ -10,13 +11,13 @@ export default class Block {
     getHash() {
         const data = this.getDict();
         const json_data = JSON.stringify(data);
-        return hash(json_data);
+        return hashing.hash(json_data);
     }
 
     getDict() {
         const transaction_hash_list = [];
         for (let i = 0; i < this.transactions.length; i++) {
-            transaction_hash_list.push(this.transactions[i].getHash());
+            transaction_hash_list.push(hashing.hash(this.transactions[i]));
         }
         return {
             "transaction_hashes": transaction_hash_list,
