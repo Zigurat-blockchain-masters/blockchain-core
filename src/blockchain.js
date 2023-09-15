@@ -1,9 +1,9 @@
+import { UTXO } from '../src/UTXO';
+import { genesisCoinbase } from '../src/transaction';
 import Block from './block';
 import UTXO from '../src/UTXO'
 import {miningTarget} from '../src/CONFIG'
 import {Transaction} from "../src/transaction"
-// const genesisCoinbase = require('./genesisCoinbase');
-
 
 let currentBlockchain
 

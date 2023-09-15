@@ -1,12 +1,13 @@
 require('dotenv').config();
-const hashing = require('./hashing');
-const { getMempool } = require('./mempool');
-const block = require('./block');
-const { getBlockchain } = require('./blockchain');
-const { coinbase, transaction } = require('./transaction');
-const { miningTarget } = require('./CONFIG');
+const hashing = require('../src/hashing');
+import { getBlockchain } from './blockchain';
+import { Block } from '../src/Block';
+const { getMempool } = require('../src/mempool');
+const { getBlockchain } = require('../src//blockchain');
+const { coinbase, transaction } = require('../src/transaction');
 const randomNonce = Math.floor(Math.random() * 16)
 const publicKey = process.env.PUBLIC_KEY;
+const { Block } = require('../src/block');
 
 export default class Miner {
   constructor(minerPublicKey) {
@@ -16,44 +17,49 @@ export default class Miner {
 
   checkAgainstTarget(hashString) {
     const hex = hashing.stringToHex(hashString);
-    return hex.startsWith("0".repeat(miningTarget));
+    return hex.startsWith("0".repeat(1));
   }
 
   mine() {
-    const topmostBlock = getBlockchain().getTopmostBlock();
-    if (!(topmostBlock instanceof block)) {
-      throw new Error("Invalid topmost block");
-    }
+    try {
+      const latestBlock = getBlockchain().getLatestBlock();
 
-    const hashPrev = topmostBlock.getHash();
-
-    const mempool = getMempool();
-
-    const filteredTxs = mempool.tx.filter((tx) => {
-      return (tx instanceof transaction || tx instanceof coinbase) && tx.isValid();
-    });
-
-    const coinbaseInstance = new coinbase(this.publicKey);
-
-    txs.unshift(coinbaseInstance);
-
-    while (true) {
-      const block = new block(
-          hashPrev,
-          txs,
-          randomNonce
-      );
-
-      const hash = block.getHashes();
-      const check = this.checkAgainstTarget(hash);
-
-      if (check) {
-        const success = getBlockchain().insertBlock(block);
-        if (success) {
-          console.log(JSON.stringify(getBlockchain().getJson()));
-        }
-        break;
+      if (!(latestBlock === Block)) {
+        throw new Error("Invalid latest block");
       }
+
+      const hashPrev = latestBlock.getHash();
+
+      const mempool = getMempool();
+
+      const filteredTxs = mempool.tx.filter((tx) => {
+        return (tx instanceof transaction || tx instanceof coinbase) && tx.isValid();
+      });
+
+      const coinbaseInstance = new coinbase(this.publicKey);
+
+      filteredTxs.unshift(coinbaseInstance);
+
+      while (true) {
+        const block = new block(
+            hashPrev,
+            filteredTxs,
+            randomNonce
+        );
+
+        const hash = block.getHashes();
+        const check = this.checkAgainstTarget(hash);
+
+        if (check) {
+          const success = getBlockchain().insertBlock(block);
+          if (success) {
+            console.log(JSON.stringify(getBlockchain().getJson()));
+          }
+          break;
+        }
+      }
+    } catch (exception) {
+      throw new Error(exception);
     }
   }
 }
