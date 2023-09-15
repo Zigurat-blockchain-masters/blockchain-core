@@ -1,4 +1,5 @@
-import { hash } from './hashing'; // Assuming hashing module is available
+//import { hash } from './hashing'; // Assuming hashing module is available
+const hashing = require('../src/hashing');
 
 export default class UTXO {
     constructor(tx_hash, public_key, message) {
@@ -16,6 +17,6 @@ export default class UTXO {
     }
 
     getHash() {
-        return hash(JSON.stringify(this.getDict()));
+        return hashing.hash(JSON.stringify(this.getDict()));
     }
 }
