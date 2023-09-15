@@ -29,9 +29,6 @@ describe('Mempool', () => {
     });
 
     it('should insert a valid transaction', () => {
-        // const utxo = new UTXO.default("1", "2", "3");
-        // const tx = new transaction.Transaction([utxo],["2"],["3"], Buffer);
-        // const transaction = Transaction;
         const tx = Transaction.Transaction.prototype;
 
         mempool.insertTransaction(tx);
