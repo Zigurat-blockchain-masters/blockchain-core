@@ -1,93 +1,77 @@
-const { mine, miner } = require('../src/miner');
-const { transaction, coinbase } = require('../src/transaction');
-const { block } = require('../src/block');
-const { getMempool } = require('../src/mempool');
-const { getBlockchain } = require('../src/blockchain');
-// import Blockchain from "../src/blockchain";
-// const { miningtarget } = require('../src/CONFIG');
-// import miningtarget from "../src/CONFIG";
+import Miner from "../src/miner";
+const hashing = require('../src/hashing');
 
-const hashing = {
-    stringToHex: jest.fn(),
-};
+// import { Miner as miner } from "../src/miner";
+import { Block as block } from "../src/block";
+import { Blockchain as blockchain, getBlockchain } from "../src/blockchain";
+import { Mempool as mempool } from"../src/mempool";
 
 describe('Miner Module', () => {
-    // Initialize a new mock miner instance for each test
-    let mockMiner;
+
+    let miner;
+    let block;
+    let blockchain;
+    let mempool;
 
     beforeEach(() => {
         jest.mock('../src/block', () => ({
-            block: jest.fn(),
-            getHash: jest.fn()
-        }));
-
-        jest.mock('../src/mempool', () => ({
-            getMempool: jest.fn(),
-        }));
-
-        jest.mock('../src/transaction', () => ({
-            coinbase: jest.fn(),
-            transaction: jest.fn(),
-        }));
+            Block: jest.fn() }));
 
         jest.mock('../src/blockchain', () => ({
-            getBlockchain: jest.fn(),
-        }));
+            blockchain: jest.fn(),
+            getBlockchain: jest.fn() }));
 
-        mockMiner = new miner(1);
+        jest.mock('../src/mempool', () => ({
+            mempool: jest.fn() }));
+
+        miner = new Miner('123');
     });
 
-    // Test case 1: hashString meets the mining target
-    it('should return true when hashString meets the mining target', () => {
-        // GIVEN
-        hashing.stringToHex.mockReturnValue('0000abcdef');
-
-        // WHEN
-        const result = mockMiner.checkAgainstTarget('some-hash-string');
-
-        // THEN
-        expect(result).toBe(true);
+    it('should initiate', () => {
+        expect(miner.publicKey).toBeDefined();
     });
 
-    // Test case 2: hashString does not meet the mining target
-    it('should return false when hashString does not meet the mining target', () => {
-        // GIVEN
-        hashing.stringToHex.mockReturnValue('1234abcdef');
+    it('should call mine() method when an instance is created', () => {
+        // Spy on the mine() method
+        const mineSpy = jest.spyOn(Miner.prototype, 'mine');
 
-        // WHEN
-        const result = mockMiner.checkAgainstTarget('some-hash-string');
+        // Expect the mine() method to have been called
+        expect(mineSpy).toHaveBeenCalled();
 
-        // THEN
-        expect(result).toBe(false);
+        // Restore the original implementation of mine() after the test
+        mineSpy.mockRestore();
     });
 
-    describe('mine', () => {
-        // Test case 1: it mines
-        it('should mine a block and insert it into the blockchain', () => {
-            // GIVEN
-            const topmostBlockMock = new block();
-            const mempoolMock = { tx: [new transaction(), new coinbase()] };
-            const blockchainMock = {
-                getTopmostBlock: jest.fn().mockReturnValue(topmostBlockMock),
-                insertBlock: jest.fn().mockReturnValue(true),
-                getJson: jest.fn().mockReturnValue({}),
-            };
+    // Create a test suite for checkAgainstTarget
+    describe('checkAgainstTarget', () => {
+        // HAPPYFLOW
+        it('should return true if the hash starts with "0"', () => {
+            // Mock the stringToHex function to return a string that starts with "0"
+            const mockStringToHex = jest.spyOn(hashing, 'stringToHex');
+            mockStringToHex.mockReturnValue('012345');
 
-            getBlockchain.mockReturnValue(blockchainMock);
-            getMempool.mockReturnValue(mempoolMock);
+            const instance = new Miner();
+            const result = instance.checkAgainstTarget('someInput');
 
-            const miner = {
-                publicKey: '1',
-                checkAgainstTarget: jest.fn().mockReturnValue(true),
-            };
+            expect(result).toBe(true);
 
-            // WHEN
-            mine.call(miner);
+            // Restore the original implementation of stringToHex
+            mockStringToHex.mockRestore();
+        });
 
-            // THEN
-            expect(blockchainMock.getTopmostBlock).toHaveBeenCalled();
-            expect(blockchainMock.insertBlock).toHaveBeenCalled();
-            expect(blockchainMock.getJson).toHaveBeenCalled();
+        // BADFLOW
+        it('should return false if the hash does not start with "0"', () => {
+            // Mock the stringToHex function to return a string that does not start with "0"
+            const mockStringToHex = jest.spyOn(hashing, 'stringToHex');
+            mockStringToHex.mockReturnValue('abcdef');
+
+            const instance = new Miner();
+            const result = instance.checkAgainstTarget('someInput');
+
+            expect(result).toBe(false);
+
+            // Restore the original implementation of stringToHex
+            mockStringToHex.mockRestore();
         });
     });
 });

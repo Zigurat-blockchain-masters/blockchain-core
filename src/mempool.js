@@ -6,16 +6,28 @@ export default class Mempool {
   }
 
   insertTransaction(receivedTx) {
-    if (!(receivedTx.isValid)) {
-      throw new Error("Invalid transaction");
+    try {
+      if (!(receivedTx.isValid)) {
+        throw new Error("Invalid transaction");
+      }
+      this.tx.push(receivedTx);
+
+    } catch (exception) {
+      throw new Error(exception);
     }
-    this.tx.push(receivedTx);
+
   }
 }
 
 function getMempool() {
-  if (mempool === null) {
-    mempool = new Mempool();
+  try {
+    if (mempool === null) {
+      mempool = new Mempool();
+    }
+
+    return mempool;
+
+  } catch (exception) {
+    return  new Error(exception);
   }
-  return mempool;
 }

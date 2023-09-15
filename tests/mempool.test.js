@@ -2,7 +2,7 @@ import Mempool from '../src/mempool';
 import getMempool from '../src/mempool';
 import Transaction from "../src/transaction";
 
-jest.mock('../src/transaction'); // Replace './Transaction' with the actual path to your Transaction module
+jest.mock('../src/transaction');
 
 // Create a custom mock implementation of the Transaction class
 const mockTransaction = jest.fn().mockImplementation((utxos, receiver_public_keys, messages, signature) => {
@@ -28,6 +28,7 @@ describe('Mempool', () => {
         expect(mempool.tx).toBeDefined();
     });
 
+    // HAPPYFLOW
     it('should insert a valid transaction', () => {
         const tx = Transaction.Transaction.prototype;
 
@@ -36,6 +37,7 @@ describe('Mempool', () => {
         expect(mempool.tx).toContain(tx);
     });
 
+    // BADFLOW
     it('should throw an error if transaction is invalid', () => {
         const tx = {};
 
