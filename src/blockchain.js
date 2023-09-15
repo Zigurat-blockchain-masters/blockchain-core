@@ -1,18 +1,20 @@
 import { UTXO } from '../src/UTXO';
 import { genesisCoinbase } from '../src/transaction';
+import Block from './block';
+import UTXO from '../src/UTXO'
+import {miningTarget} from '../src/CONFIG'
+import {Transaction} from "../src/transaction"
 
 let currentBlockchain
 
 export const getBlockchain = () => {
-  if (currentBlockchain === undefined) {
-    currentBlockchain = new Blockchain()
-  }
-  return currentBlockchain
-}
+  return currentBlockchain ? currentBlockchain : (currentBlockchain = new Blockchain());
+};
+
 
 export class Blockchain{
   constructor(){
-    this.chain = [genesisCoinbase]
+    this.chain = [new Block("ZEvMflZDcwQJmarInnYi88px+6HZcv2Uoxw7+/JOOTg=", ["test"], 0)]
   }
 
 
@@ -21,42 +23,24 @@ export class Blockchain{
       return false;
     }   
     for (let tx of block.transactions) {
-      if (!tx.isValid()) {
+      const newTx = new Transaction(tx);
+      if (!newTx.isValid()) {
         return false;
       }
-      if (tx instanceof Transaction) {
-        for (let utxo of tx.utxos) {
-          if (!this.isValidUTXO(utxo)) {
-            return false;
-          }
-        }
-      }
+      // temporarily removed, cant compare UTXOs with UTXOs on the blockchain if the block hasn't been added, will always FALSE
+      // if (tx instanceof Transaction) {
+      //   for (let utxo of tx.utxos) {
+      //     if (!this.isValidUTXO(utxo)) {
+      //       return false;
+      //     }
+      //   }
+      // }
     }
     if (!this.checkAgainstTarget(miningTarget, block.getHash())) {
       return false;
     }
     this.chain.push(block);
     return true;
-  }
-
-  isChainValid(){
-    for(let i = 1; i < this.chain.length; i++){
-      if (this.chain.length === 1) {throw new Error("Chain only contains the genesis block")}
-
-      const currentBlock = this.chain[i];
-      const previousBlock = this.chain[i - 1]
-
-      if(!currentBlock.hasValidTransactions()){
-        return false
-      }   
-      if(currentBlock.hash != currentBlock.calculateHash()){
-        return false;
-      }
-      if(currentBlock.previousHash != previousBlock.hash){        
-        return false;
-      }
-    return true
-    }
   }
  
 
@@ -66,6 +50,9 @@ export class Blockchain{
 
 
   checkAgainstTarget(miningTarget, hash) {
+    if (typeof miningTarget !== 'number' || miningTarget <= 0 || typeof hash !== 'string') {
+      throw new Error('Invalid arguments');
+    }
     const targetPrefix = '0'.repeat(miningTarget);
     return hash.startsWith(targetPrefix);
   }
@@ -73,7 +60,8 @@ export class Blockchain{
   
   getUTXOs(publicKey) {
     const utxos = [];
-    for (const block of this.chain) {
+    for (let i = 1; i < this.chain.length; i++) {
+      const block = this.chain[i];
       for (const tx of block.transactions) {
         let counter = 0;
         for (const pk of tx.receiverPublicKeys) {
@@ -95,20 +83,17 @@ export class Blockchain{
         if (tx.getHash() === UTXO.txHash) {
           const index = tx.receiverPublicKeys.indexOf(UTXO.publicKey);
           if (index !== -1 && UTXO.message === tx.messages[index]) {
-            // UTXO found with matching transaction hash, public key, and message
             return true;
           }
         }
       }
     }
-
-    // UTXO not found in any transactions, invalid
     return false;
   }
   
 
   getJson() {
-    const blocks = this.chain.map(block => block.toJSON());
+    const blocks = this.chain.map(block => JSON.stringify(block));
     return JSON.stringify({
       blocks
     });
