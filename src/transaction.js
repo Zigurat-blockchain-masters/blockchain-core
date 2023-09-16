@@ -1,8 +1,9 @@
 import { verify } from './cryptography'; 
-import { hash as _hash } from './hashing'; 
-import UTXO from './UTXO'; 
+//import { hash as _hash } from './hashing';
+const hashing = require('../src/hashing'); 
+import UTXO from './UTXO';
 
-class Transaction {
+export class Transaction {
     constructor(utxos, receiver_public_keys, messages, signature) {
         if (!Array.isArray(receiver_public_keys) || !Array.isArray(messages) ||
             receiver_public_keys.length !== messages.length || receiver_public_keys.length === 0 ||
@@ -41,7 +42,7 @@ class Transaction {
     }
 
     getHash() {
-        return _hash(this.getJson());
+        return hashing.hash(this.getJson());
     }
 
     getFullJson() {
@@ -65,7 +66,7 @@ class Transaction {
     }
 }
 
-class UnsignedTransaction {
+export class UnsignedTransaction {
     constructor(utxos, receiver_public_keys, messages) {
         if (!Array.isArray(receiver_public_keys) || !Array.isArray(messages) ||
             receiver_public_keys.length !== messages.length || receiver_public_keys.length === 0 ||
@@ -107,7 +108,7 @@ class UnsignedTransaction {
     }
 }
 
-class Coinbase {
+export class Coinbase {
     constructor(receiver) {
         this.receiver_public_keys = [receiver];
         this.messages = [50];
@@ -137,9 +138,8 @@ class Coinbase {
     }
 }
 
-
-module.exports = {
-    Transaction,
-    UnsignedTransaction,
-    Coinbase
-}
+//module.exports = {
+//    Transaction,
+//    UnsignedTransaction,
+//    Coinbase
+//}
