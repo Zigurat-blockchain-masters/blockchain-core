@@ -1,6 +1,35 @@
 const crypto = require('crypto');
 
 /**
+ * Generates a random password for cryptographic operations.
+ * @returns {string} A random password.
+ * @throws {Error} Throws an error if generation fails.
+ */
+function generatePassword() {
+    try {
+        const randomness = crypto.randomBytes(128);
+        return randomness.toString('base64');
+    } catch (error) {
+        throw new Error(`Error while generating password: ${error.message}`);
+    }
+}
+
+
+/**
+ * Generate a random crypto string of a given length.
+ * @param {number} length - The length of the string to be generated.
+ * @returns {string} A random string.
+ * @throws {Error} Throws an error if generation fails.
+ */
+function generateRandomString(length) {
+    try {
+        return crypto.randomBytes(length).toString('hex');
+    } catch (error) {
+        throw new Error(`Error while generating random string: ${error.message}`);
+    }
+}
+
+/**
  * Generates a pair of cryptographic keys (private and public).
  * @returns {Object} An object containing private and public keys.
  * @throws {Error} Throws an error if generation fails.
@@ -82,6 +111,8 @@ function verify(publicPemString, signature, message) {
 }
 
 module.exports = {
+    generatePassword,
+    generateRandomString,
     generateKeyPair,
     loadPrivatePem,
     sign,
