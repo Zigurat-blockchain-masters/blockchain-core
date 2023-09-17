@@ -1,7 +1,7 @@
-import { verify } from './cryptography'; 
-//import { hash as _hash } from './hashing';
-const hashing = require('../src/hashing'); 
+import {verify} from './cryptography';
 import UTXO from './UTXO';
+
+const hashing = require('../src/hashing');
 
 export class Transaction {
     constructor(utxos, receiver_public_keys, messages, signature) {
@@ -10,18 +10,18 @@ export class Transaction {
             !Array.isArray(utxos) || utxos.length === 0) {
             throw new Error("Invalid input parameters");
         }
-        
+
         for (const i of utxos) {
             if (!(i instanceof UTXO) || i.public_key !== utxos[0].public_key) {
                 throw new Error("Invalid UTXOs");
             }
         }
-        
+
         this.utxos = utxos;
         this.receiver_public_keys = receiver_public_keys;
         this.messages = messages;
         this.signature = signature;
-        
+
         if (!this.isValid()) {
             throw new Error("Transaction is not valid");
         }
@@ -73,13 +73,13 @@ export class UnsignedTransaction {
             !Array.isArray(utxos) || utxos.length === 0) {
             throw new Error("Invalid input parameters");
         }
-        
+
         for (const i of utxos) {
             if (!(i instanceof UTXO) || i.public_key !== utxos[0].public_key) {
                 throw new Error("Invalid UTXOs");
             }
         }
-        
+
         this.utxos = utxos;
         this.receiver_public_keys = receiver_public_keys;
         this.messages = messages;
@@ -87,12 +87,11 @@ export class UnsignedTransaction {
 
     getDict() {
         const utxos_json = this.utxos.map(i => i.getDict());
-        const data = {
+        return {
             "utxos": utxos_json,
             "receiver_public_keys": this.receiver_public_keys,
             "messages": this.messages
         };
-        return data;
     }
 
     getJson() {
@@ -137,9 +136,3 @@ export class Coinbase {
         return JSON.stringify(this.getDict());
     }
 }
-
-//module.exports = {
-//    Transaction,
-//    UnsignedTransaction,
-//    Coinbase
-//}
