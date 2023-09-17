@@ -8,17 +8,15 @@ describe('End-to-End Cryptographic Operations', () => {
 
         // Generate a key pair
         const keyPair = cryptoModule.generateKeyPair();
+        expect(keyPair.privateKey).toBeTruthy();
+        expect(keyPair.publicKey).toBeTruthy();
 
         // Sign the message
         const signature = cryptoModule.sign(keyPair.privateKey, password, randomMessage);
+        expect(signature).toBeTruthy();
 
         // Verify the signature
         const isVerified = cryptoModule.verify(keyPair.publicKey, signature, randomMessage);
-
-        // Expectations
-        expect(keyPair.privateKey).toBeTruthy();
-        expect(keyPair.publicKey).toBeTruthy();
-        expect(signature).toBeTruthy();
         expect(isVerified).toBe(true);
     });
 });
