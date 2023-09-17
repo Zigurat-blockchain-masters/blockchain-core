@@ -1,22 +1,20 @@
-import {UTXO} from 'UTXO';
-import {block} from 'block';
-import {miningTarget} from 'CONFIG';
-import {transaction} from 'transaction';
-import {genesisCoinbase} from 'genesisCoinbase';
+import { genesisCoinbase } from './Genesis';
+import Block from './block';
+import UTXO from './UTXO'
+import {miningTarget} from './CONFIG'
+import {Transaction} from "./transaction"
 
 let currentBlockchain
 
 export const getBlockchain = () => {
-    if (currentBlockchain === undefined) {
-        currentBlockchain = new Blockchain()
-    }
-    return currentBlockchain
-}
+  return currentBlockchain ? currentBlockchain : (currentBlockchain = new Blockchain());
+};
 
-export class Blockchain {
-    constructor() {
-        this.chain = [genesisCoinbase]
-    }
+
+export class Blockchain{
+  constructor(){
+    this.chain = [new Block("ZEvMflZDcwQJmarInnYi88px+6HZcv2Uoxw7+/JOOTg=", [genesisCoinbase()], 0)]
+  }
 
 
     insertBlock(block) {
@@ -48,7 +46,7 @@ export class Blockchain {
         return true; // Block successfully inserted
     }
 
-    
+
     isChainValid() {
         const chainLength = this.chain.length;
 

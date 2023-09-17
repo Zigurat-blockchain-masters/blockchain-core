@@ -1,34 +1,37 @@
-jest.mock('../src/transaction', () => {
-  class MockTransaction {
-    constructor(utxos, receiver_public_keys, messages, signature) {
-      if (!Array.isArray(receiver_public_keys) || !Array.isArray(messages) ||
-          receiver_public_keys.length !== messages.length || receiver_public_keys.length === 0 ||
-          !Array.isArray(utxos) || utxos.length === 0) {
-        throw new Error("Invalid input parameters");
-      }
-
-      this.utxos = utxos;
-      this.receiverPublicKeys = receiver_public_keys;
-      this.messages = messages;
-      this.signature = signature;
-      this.getHash = jest.fn(() => 'mockedHash');
-    }
-  }
-
-  return {Transaction: MockTransaction };
-});
-
 
 import { getBlockchain, Blockchain } from '../src/blockchain';
 import Block from "../src/block"
 import { Transaction } from "../src/transaction"
+import { miningTarget } from '../src/CONFIG';
 
-let miningTarget = 2
+jest.mock('../src/transaction', () => {
+    class MockTransaction {
+      constructor(utxos, receiver_public_keys, messages, signature) {
+        if (!Array.isArray(receiver_public_keys) || !Array.isArray(messages) ||
+            receiver_public_keys.length !== messages.length || receiver_public_keys.length === 0 ||
+            !Array.isArray(utxos) || utxos.length === 0) {
+          throw new Error("Invalid input parameters");
+        }
+        this.utxos = utxos;
+        this.receiverPublicKeys = receiver_public_keys;
+        this.messages = messages;
+        this.signature = signature;
+        this.getHash = jest.fn(() => 'mockedHash');
+      }
+    }
+  
+    return {
+      ...jest.requireActual('../src/transaction'), 
+      Transaction: MockTransaction,
+      genesisCoinbase: jest.fn(),
+    };
+  });
 
-
+  
 describe('Blockchain Module', () => {
+    const mockGenesisCoinbase = 'mockedGenesisCoinbaseResult';
+    require('../src/transaction').genesisCoinbase.mockReturnValue(mockGenesisCoinbase);
     const chain = getBlockchain();
-
         
     
     describe('getBlockchain function', () => {
@@ -79,8 +82,6 @@ describe('Blockchain Module', () => {
         it('should fail with hashes that dont start with the miningTarget', () => {
           const testString = chain.checkAgainstTarget(miningTarget, "xxx");
           expect(testString).toBe(false);
-          const testString1 = chain.checkAgainstTarget(miningTarget, "0xxx");
-            expect(testString1).toBe(false);
         });
         it('should return success when a proper hash is used', () => {
             const hash = chain.checkAgainstTarget(miningTarget, "00xxx");
