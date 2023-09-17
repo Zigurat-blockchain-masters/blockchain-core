@@ -4,11 +4,9 @@ import UTXO from './UTXO'
 import {miningTarget} from './CONFIG'
 import {Transaction} from "./transaction"
 
-let currentBlockchain
+let currentBlockchain;
 
-export const getBlockchain = () => {
-    return currentBlockchain ? currentBlockchain : (currentBlockchain = new Blockchain());
-};
+export const getBlockchain = () => currentBlockchain ?? (currentBlockchain = new Blockchain());
 
 
 export class Blockchain {

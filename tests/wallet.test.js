@@ -5,7 +5,7 @@ import { getBlockchain } from '../src/Blockchain'; // Import the getBlockchain f
 jest.mock('fs'); // Mock the fs module to simulate file operations
 
 describe('Wallet', () => {
-    let wallet;
+    let wallet = new Wallet();
 
     describe('Constructor', () => {
         it('should initialize with privateKey and password when a private key file exists', () => {
