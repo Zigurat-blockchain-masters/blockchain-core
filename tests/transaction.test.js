@@ -1,24 +1,28 @@
 //const Transaction = require('../src/transaction');
 import {Transaction,UnsignedTransaction,Coinbase} from '../src/transaction';
 import UTXO from '../src/UTXO';
-import { generatePassword,generateKeyPair,generatePem,
-    generatePublicPem,loadPublicKey,
-    loadPrivatePem,generatePrivatePemString,
-    generatePublicPemString,sign,verify } from '../src/cryptography'; 
+//import { generatePassword,generateKeyPair,generatePem,
+//    generatePublicPem,loadPublicKey,
+//    loadPrivatePem,generatePrivatePemString,
+//    generatePublicPemString,sign,verify } from '../src/cryptography'; 
 const hashing = require('../src/hashing'); 
-
+const cryptoModule = require('../src/cryptography');
     
 
-const Password1 = generatePassword();
-const KeyPair1 = generateKeyPair();
+const Password1 = cryptoModule.generatePassword();
+const KeyPair1 = cryptoModule.generateKeyPair();
+const publicKey1 = KeyPair1.publicKey;
+const privateKey1 = KeyPair1.privateKey;
+
 //const PEM1 = generatePem(KeyPair1.privateKey,Password1);
 //const PublicPEM1 = generatePublicPem(KeyPair1.publicKey);
 
 //const PrivPEMString1 = generatePrivatePemString(Password1);
-const PrivPEMString1 = 'PPS1';
-const message = 50;
+//const PrivPEMString1 = 'PPS1';
+const message = '50';
 //const signaturebase64 = sign(PrivPEMString1, Password1, message);
-const signaturebase64 = 'signature';
+//const signaturebase64 = 'signature';
+const signaturebase64 = cryptoModule.sign(privateKey1, Password1, message);
 
 const sampleTxHash1 = 'sampleTxHash'; 
 const samplePublicKey1 = 'samplePublicKey'; 
