@@ -2,14 +2,16 @@ require('dotenv').config();
 const hashing = require('../src/hashing');
 const {getMempool} = require('../src/mempool');
 const {getBlockchain} = require('../src//blockchain');
-const {coinbase, transaction} = require('../src/transaction');
+// const {coinbase, transaction} = require('../src/transaction');
 const randomNonce = Math.floor(Math.random() * 16)
 const publicKey = process.env.PUBLIC_KEY;
-const {Block} = require('../src/block');
+import Block from '../src/block';
+import {Coinbase, Transaction} from '../src/transaction';
+
 
 export default class Miner {
-    constructor(minerPublicKey) {
-        this.publicKey = minerPublicKey;
+    constructor(minerKey) {
+        this.publicKey = minerKey;
         this.mine();
     }
 
@@ -19,45 +21,42 @@ export default class Miner {
     }
 
     mine() {
-        try {
-            const latestBlock = getBlockchain().getLatestBlock();
+        const latestBlock = getBlockchain().getLatestBlock();
 
-            if (!(latestBlock instanceof Block)) {
-                throw new Error("Invalid latest block");
-            }
+        if (!(latestBlock instanceof Block)) {
+            throw new Error("Invalid latest block");
+        }
 
-            const hashPrev = latestBlock.getHash();
+        const hashPrev = latestBlock.getHash();
 
-            const mempool = getMempool();
+        const mempool = getMempool();
 
-            const filteredTxs = mempool.tx.filter((tx) => {
-                return (tx instanceof transaction || tx instanceof coinbase) && tx.isValid();
-            });
+        const filteredTxs = mempool.transactions.filter((tx) => {
+            return (tx instanceof Transaction || tx instanceof Coinbase) && tx.isValid();
+        });
 
-            const coinbaseInstance = new coinbase(this.publicKey);
+        const coinbaseInstance = new Coinbase(this.publicKey);
 
-            filteredTxs.unshift(coinbaseInstance);
+        filteredTxs.unshift(coinbaseInstance);
 
-            while (true) {
-                const block = new Block(
-                    hashPrev,
-                    filteredTxs,
-                    randomNonce
-                );
+        while (true) {
+            const block = new Block(
+                hashPrev,
+                filteredTxs,
+                randomNonce
+            );
 
-                const hash = block.getHash();
-                const check = this.checkAgainstTarget(hash);
+            const hash = block.getHash();
 
-                if (check) {
-                    const success = getBlockchain().insertBlock(block);
-                    if (success) {
-                        console.log(JSON.stringify(getBlockchain().getJson()));
-                    }
-                    break;
+            const check = this.checkAgainstTarget(hash);
+
+            if (check) {
+                const success = getBlockchain().insertBlock(block);
+                if (success) {
+                    console.log(JSON.stringify(getBlockchain().getJson()));
                 }
+                break;
             }
-        } catch (exception) {
-            throw new Error(exception);
         }
     }
 }

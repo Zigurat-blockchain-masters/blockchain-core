@@ -11,7 +11,8 @@ export const getBlockchain = () => currentBlockchain ?? (currentBlockchain = new
 
 export class Blockchain {
     constructor() {
-        this.chain = [new Block("ZEvMflZDcwQJmarInnYi88px+6HZcv2Uoxw7+/JOOTg=", [genesisCoinbase()], 0)]
+        const initCoinbase = genesisCoinbase();
+        this.chain = [new Block("ZEvMflZDcwQJmarInnYi88px+6HZcv2Uoxw7+/JOOTg=", [initCoinbase.getHash()], 0)]
     }
 
 
