@@ -16,10 +16,11 @@ export default class Wallet {
             this.password = password;
         } else {
             this.password = cryptography.generatePassword();
-            this.privateKey = cryptography.generatePrivatePemString(this.password);
+            this.keyPair = cryptography.generateKeyPair();
+            this.privateKey = this.keyPair.privateKey;
             this.saveToFile();
         }
-        this.publicKey = cryptography.generatePublicPemString(this.privateKey, this.password);
+        this.publicKey = this.keyPair.publicKey;
     }
 
     sendMoney(receiverPks, msgs) {
@@ -30,9 +31,8 @@ export default class Wallet {
     }
 
     getUTXOs(money) {
-        const publicKey = cryptography.generatePublicPemString(this.privateKey, this.password);
         const blockchain = getBlockchain();
-        const utxos = blockchain.getUTXOs(publicKey);
+        const utxos = blockchain.getUTXOs(this.publicKey);
 
         if (!Array.isArray(utxos)) {
             console.error("UTXOs are not a list");
