@@ -1,42 +1,45 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs'; // Import the fs module for file operations
-import { getMempool } from './Mempool';
-import { Transaction, unsnigedTransaction } from './Transaction';
+import {existsSync, readFileSync, writeFileSync} from 'fs';
+import {getMempool} from './mempool';
+import {Transaction, UnsignedTransaction} from './transaction';
+import {getBlockchain} from './blockchain';
+import * as cryptography from './cryptography';
 
 export default class Wallet {
     constructor() {
+        this.loadOrCreateWallet();
+    }
+
+    loadOrCreateWallet() {
         if (existsSync('private_key.json')) {
-            const { privateKey, password } = this.loadFromFile();
+            const {privateKey, password} = this.loadFromFile();
             this.privateKey = privateKey;
             this.password = password;
         } else {
-            this.password = this.generatePassword();
-            this.privateKey = this.generatePrivatePemString(this.password);
+            this.password = cryptography.generatePassword();
+            this.privateKey = cryptography.generatePrivatePemString(this.password);
             this.saveToFile();
         }
-        this.publicKey = this.generatePublicPemString(this.privateKey, this.password);
+        this.publicKey = cryptography.generatePublicPemString(this.privateKey, this.password);
     }
 
     sendMoney(receiverPks, msgs) {
-        let moneyToSend = 0;
-        for (const m of msgs) {
-            moneyToSend += m;
-        }
-        const tx = this.createTransaction(this.getUTXOs(moneyToSend), receiverPks, msgs);
+        const moneyToSend = msgs.reduce((total, m) => total + m, 0);
+        const utxos = this.getUTXOs(moneyToSend);
+        const tx = this.createTransaction(utxos, receiverPks, msgs);
         this.insertToMempool(tx);
     }
 
     getUTXOs(money) {
+        const publicKey = cryptography.generatePublicPemString(this.privateKey, this.password);
         const blockchain = getBlockchain();
-        const utxos = blockchain.getUTXOs(this.generatePublicPemString(this.privateKey, this.password));
+        const utxos = blockchain.getUTXOs(publicKey);
 
-        if (Array.isArray(utxos)) {
-            console.log("UTXOs are inside list");
-        } else {
-            console.log("UTXOs are not a list");
+        if (!Array.isArray(utxos)) {
+            console.error("UTXOs are not a list");
+            return [];
         }
 
         const listOfValidUTXO = utxos.filter(i => blockchain.isValidUTXO(i));
-
         const neededUTXOs = [];
         let totalAmount = 0;
 
@@ -53,9 +56,9 @@ export default class Wallet {
     }
 
     createTransaction(utxos, receiverPks, msgs) {
-        const unsigned = new unsignedTransaction({ utxos, receiverPublicKey: receiverPks, messages: msgs });
-        const signature = unsigned.sign({ priv_key: this.privateKey, password: this.password });
-        return new Transaction({ utxos, receiverPublicKey: receiverPks, messages: msgs, Signature: signature });
+        const unsigned = new UnsignedTransaction(utxos, receiverPks, msgs);
+        const signature = unsigned.sign(this.privateKey, this.password);
+        return new Transaction(utxos, receiverPks, msgs, signature);
     }
 
     insertToMempool(tx) {
@@ -68,27 +71,26 @@ export default class Wallet {
             password: this.password
         };
 
-        // Check if private key and password are not empty before saving to file
         if (!data.privateKey || !data.password) {
-            console.error("Private key or password is empty. Cannot save to file.");
-            return;
+            throw new Error("Private key or password is empty. Cannot save to file.");
         }
 
         try {
             writeFileSync('private_key.json', JSON.stringify(data));
         } catch (error) {
-            console.error("Could not write file to disk");
-            console.error(error); // Print the error details for debugging
+            console.error(`Could not write file to disk, error: ${error.message}`);
+            throw error;
         }
     }
 
     loadFromFile() {
         try {
             const fileData = readFileSync('private_key.json', 'utf8');
-            const data = JSON.parse(fileData);
-            return { privateKey: data.privateKey, password: data.password };
+            const data = JSON.parse(fileData.toString());
+            return {privateKey: data.privateKey, password: data.password};
         } catch (error) {
-            console.error("Could not load the file from disk");
+            console.error(`Could not load the file from disk, error: ${error.message}`);
+            throw error;
         }
     }
 }

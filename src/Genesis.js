@@ -1,4 +1,4 @@
-const { Coinbase } = require('./transaction'); 
+const {Coinbase} = require('./transaction');
 
 const CREATORS_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAl20HC7xKreGy16YVuvNQ

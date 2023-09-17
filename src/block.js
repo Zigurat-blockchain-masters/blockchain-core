@@ -1,5 +1,4 @@
-const hashing = require('../src/hashing');
-import { hash } from './hashing'; 
+import { hash } from './hashing'; // Replace with the actual path
 
 export default class Block {
     constructor(hash_previous_block, transactions, nonce) {
@@ -11,18 +10,16 @@ export default class Block {
     getHash() {
         const data = this.getDict();
         const json_data = JSON.stringify(data);
-        return hashing.hash(json_data);
+        return hash(json_data);
     }
 
     getDict() {
-        const transaction_hash_list = [];
-        for (let i = 0; i < this.transactions.length; i++) {
-            transaction_hash_list.push(hashing.hash(this.transactions[i]));
-        }
+        const transaction_hashes = this.transactions.map(tx => tx.getHash());
+
         return {
-            "transaction_hashes": transaction_hash_list,
-            "hash_previous_block": this.hash_previous_block,
-            "nonce": this.nonce
+            transaction_hashes,
+            hash_previous_block: this.hash_previous_block,
+            nonce: this.nonce,
         };
     }
 }
