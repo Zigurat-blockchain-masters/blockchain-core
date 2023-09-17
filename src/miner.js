@@ -5,7 +5,7 @@ const {getBlockchain} = require('../src//blockchain');
 const {coinbase, transaction} = require('../src/transaction');
 const randomNonce = Math.floor(Math.random() * 16)
 const publicKey = process.env.PUBLIC_KEY;
-const {Block} = require('../src/block');
+import Block from '../src/block';
 
 export default class Miner {
     constructor(minerPublicKey) {
@@ -20,46 +20,55 @@ export default class Miner {
 
     mine() {
         try {
-            const latestBlock = getBlockchain().getLatestBlock();
+            const blockchain = getBlockchain();
+            const latestBlock = blockchain.getLatestBlock();
 
             if (!(latestBlock instanceof Block)) {
                 throw new Error("Invalid latest block");
             }
 
-            const hashPrev = latestBlock.getHash();
-
             const mempool = getMempool();
-
-            const filteredTxs = mempool.tx.filter((tx) => {
+            if(mempool.tx === undefined) {
+                return;
+            }
+            const validTxs = mempool.tx.filter((tx) => {
                 return (tx instanceof transaction || tx instanceof coinbase) && tx.isValid();
             });
 
             const coinbaseInstance = new coinbase(this.publicKey);
+            validTxs.unshift(coinbaseInstance);
 
-            filteredTxs.unshift(coinbaseInstance);
+            let nonce = 0;
+            let block = null;
+            let mining = true;
 
-            while (true) {
-                const block = new Block(
-                    hashPrev,
-                    filteredTxs,
-                    randomNonce
+            while (mining) {
+                block = new Block(
+                    latestBlock.getHash(),
+                    validTxs,
+                    nonce
                 );
 
                 const hash = block.getHash();
-                const check = this.checkAgainstTarget(hash);
 
-                if (check) {
-                    const success = getBlockchain().insertBlock(block);
-                    if (success) {
-                        console.log(JSON.stringify(getBlockchain().getJson()));
-                    }
-                    break;
+                if (this.checkAgainstTarget(hash)) {
+                    mining = false; // Stop mining when a valid block is found
+                } else {
+                    nonce++; // Increment nonce for the next iteration
                 }
             }
-        } catch (exception) {
-            throw new Error(exception);
+
+            // Insert the mined block into the blockchain
+            const success = blockchain.insertBlock(block);
+
+            if (success) {
+                console.log(JSON.stringify(blockchain.getJson()));
+            }
+        } catch (error) {
+            console.error("Error while mining:", error.message);
         }
     }
+
 }
 
 const miner = new Miner(publicKey);
