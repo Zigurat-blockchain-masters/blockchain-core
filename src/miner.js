@@ -1,7 +1,7 @@
 require('dotenv').config();
 const hashing = require('../src/hashing');
-import { getBlockchain } from './blockchain';
-import { Block } from '../src/Block';
+// import { getBlockchain } from './blockchain';
+// import { Block } from '../src/Block';
 const { getMempool } = require('../src/mempool');
 const { getBlockchain } = require('../src//blockchain');
 const { coinbase, transaction } = require('../src/transaction');
