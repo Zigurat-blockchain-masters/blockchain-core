@@ -3,21 +3,27 @@ import {hash} from './hashing';
 import UTXO from './UTXO';
 
 function validateInputParameters(utxos, receiver_public_keys, messages) {
-    if (
-        !Array.isArray(receiver_public_keys) ||
-        !Array.isArray(messages) ||
-        receiver_public_keys.length !== messages.length ||
-        receiver_public_keys.length === 0 ||
-        !Array.isArray(utxos) ||
-        utxos.length === 0
-    ) {
-        throw new Error('Invalid input parameters');
+    
+    if (!Array.isArray(utxos)) {
+        throw new Error('Invalid UTXOs, received:' + utxos);
+    }
+
+    if (!Array.isArray(receiver_public_keys) || receiver_public_keys.length === 0 || receiver_public_keys.length !== messages.length) {
+        throw new Error('Invalid receiver public keys, received: ' + receiver_public_keys)
+    }
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+        throw new Error('Invalid messages, received: ' + messages)
     }
 }
 
 class BaseTransaction {
     constructor(utxos, receiver_public_keys, messages, signature) {
         try {
+            if (utxos === null) {
+                utxos = []; // Coinbase transaction
+            }
+
             validateInputParameters(utxos, receiver_public_keys, messages);
 
             for (const i of utxos) {
@@ -59,17 +65,22 @@ class BaseTransaction {
 
     isValid() {
         try {
-            const signature_valid = verify(this.utxos[0].public_key, this.signature, this.getHash());
-            let spent = 0;
-            for (const msg of this.messages) {
-                spent += msg;
+            const signature_valid = true;
+            const amount_enough = true;
+            if (!this.utxos === []) {
+                signature_valid = verify(this.utxos[0].public_key, this.signature, this.getHash());
+                let spent = 0;
+                for (const msg of this.messages) {
+                    spent += msg;
+                }
+                let balance = 0;
+                for (const utxo of this.utxos) {
+                    balance += utxo.message;
+                }
+                amount_enough = balance === spent;
             }
-            let balance = 0;
-            for (const utxo of this.utxos) {
-                balance += utxo.message;
-            }
-            const amount_enough = balance === spent;
             return signature_valid && amount_enough;
+
         } catch (error) {
             console.error(`Error during ${this.constructor.name} validation:`, error.message);
             return false;

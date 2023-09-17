@@ -48,7 +48,7 @@ describe('UTXO', () => {
         it('should calculate the correct hash of a UTXO', () => {
 
             // Create data that is expected from applying getHash to UTXO object
-            const expectedData = hashing.hash(JSON.stringify(UTXOObj.getDict()));
+            const expectedData = hashing.hash(JSON.stringify(UTXOObj));
             
             //Verify that the getHash method returns the expected hash
             expect(UTXOObj.getHash()).toBeDefined(); 
@@ -57,20 +57,4 @@ describe('UTXO', () => {
         });
     });
 
-    describe('getDict function', () => { 
-        it('should return the correct dictionary (JSON) representation of a UTXO', () => {
-
-            // Create data that is expected from applying getDict to UTXO object
-            const expectedData = {
-                "tx_hash": sampleTxHash,
-                "public_key": samplePublicKey,
-                "message": sampleMessage
-            };
-
-            // Verify that the getDict method returns the expected dictionary (JSON)
-            expect(UTXOObj.getDict()).toBeDefined(); 
-            expect(typeof UTXOObj.getDict()).toBe('object');
-            expect(UTXOObj.getDict()).toEqual(expectedData);
-        });
-        });
 }); 
