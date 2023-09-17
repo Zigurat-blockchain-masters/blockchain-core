@@ -104,4 +104,4 @@ class Coinbase extends BaseTransaction {
     }
 }
 
-export { Transaction, UnsignedTransaction, Coinbase };
+export {Transaction, UnsignedTransaction, Coinbase};

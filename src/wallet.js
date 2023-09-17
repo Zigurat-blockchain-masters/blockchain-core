@@ -1,7 +1,7 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { getMempool } from './mempool';
-import { Transaction, UnsignedTransaction } from './transaction';
-import { getBlockchain } from './blockchain';
+import {existsSync, readFileSync, writeFileSync} from 'fs';
+import {getMempool} from './mempool';
+import {Transaction, UnsignedTransaction} from './transaction';
+import {getBlockchain} from './blockchain';
 import * as cryptography from './cryptography';
 
 export default class Wallet {
@@ -11,7 +11,7 @@ export default class Wallet {
 
     loadOrCreateWallet() {
         if (existsSync('private_key.json')) {
-            const { privateKey, password } = this.loadFromFile();
+            const {privateKey, password} = this.loadFromFile();
             this.privateKey = privateKey;
             this.password = password;
         } else {
@@ -86,8 +86,8 @@ export default class Wallet {
     loadFromFile() {
         try {
             const fileData = readFileSync('private_key.json', 'utf8');
-            const data = JSON.parse(fileData);
-            return { privateKey: data.privateKey, password: data.password };
+            const data = JSON.parse(fileData.toString());
+            return {privateKey: data.privateKey, password: data.password};
         } catch (error) {
             console.error(`Could not load the file from disk, error: ${error.message}`);
             throw error;

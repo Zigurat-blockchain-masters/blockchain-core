@@ -1,4 +1,4 @@
-import { genesisCoinbase } from './Genesis';
+import {genesisCoinbase} from './Genesis';
 import Block from './block';
 import UTXO from './UTXO'
 import {miningTarget} from './CONFIG'
@@ -7,14 +7,14 @@ import {Transaction} from "./transaction"
 let currentBlockchain
 
 export const getBlockchain = () => {
-  return currentBlockchain ? currentBlockchain : (currentBlockchain = new Blockchain());
+    return currentBlockchain ? currentBlockchain : (currentBlockchain = new Blockchain());
 };
 
 
-export class Blockchain{
-  constructor(){
-    this.chain = [new Block("ZEvMflZDcwQJmarInnYi88px+6HZcv2Uoxw7+/JOOTg=", [genesisCoinbase()], 0)]
-  }
+export class Blockchain {
+    constructor() {
+        this.chain = [new Block("ZEvMflZDcwQJmarInnYi88px+6HZcv2Uoxw7+/JOOTg=", [genesisCoinbase()], 0)]
+    }
 
 
     insertBlock(block) {
@@ -123,7 +123,7 @@ export class Blockchain{
 
 
     getJson() {
-        const blocks = this.chain.map(block => block.toJSON());
+        const blocks = this.chain.map(block => block.getDict());
         return JSON.stringify({blocks});
     }
 }

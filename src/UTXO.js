@@ -1,4 +1,4 @@
-import { hash } from './hashing';
+import {hash} from './hashing';
 
 export default class UTXO {
     constructor(tx_hash, public_key, message) {

@@ -23,8 +23,8 @@ function generateKeyPair() {
     try {
         return crypto.generateKeyPairSync('rsa', {
             modulusLength: 4096,
-            publicKeyEncoding: { type: 'spki', format: 'pem' },
-            privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+            publicKeyEncoding: {type: 'spki', format: 'pem'},
+            privateKeyEncoding: {type: 'pkcs8', format: 'pem'},
         });
     } catch (error) {
         throw new Error(`Error while generating key pair: ${error.message}`);
@@ -58,7 +58,7 @@ function generatePem(privateKey, password) {
  */
 function generatePublicPem(publicKey) {
     try {
-        return publicKey.export({ type: 'spki', format: 'pem' });
+        return publicKey.export({type: 'spki', format: 'pem'});
     } catch (error) {
         throw new Error(`Error while generating PEM-encoded public key: ${error.message}`);
     }
@@ -72,7 +72,7 @@ function generatePublicPem(publicKey) {
  */
 function loadPublicKey(publicPem) {
     try {
-        return crypto.createPublicKey({ key: publicPem, format: 'pem' });
+        return crypto.createPublicKey({key: publicPem, format: 'pem'});
     } catch (error) {
         throw new Error(`Error while loading public key: ${error.message}`);
     }
@@ -87,7 +87,7 @@ function loadPublicKey(publicPem) {
  */
 function loadPrivatePem(privatePem, password) {
     try {
-        return crypto.createPrivateKey({ key: privatePem, format: 'pem', passphrase: password });
+        return crypto.createPrivateKey({key: privatePem, format: 'pem', passphrase: password});
     } catch (error) {
         throw new Error(`Error while loading private key: ${error.message}`);
     }
