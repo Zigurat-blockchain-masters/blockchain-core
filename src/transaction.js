@@ -1,6 +1,6 @@
-import {verify} from 'crypto'; // Assuming crypto module is available
-import {hash} from './hashing'; // Assuming hashing module is available
-import UTXO from './UTXO'; // Assuming UTXO module is available
+import {verify} from 'crypto'; //
+import {hash} from './hashing';
+import UTXO from './UTXO';
 
 function validateInputParameters(utxos, receiver_public_keys, messages) {
     if (
