@@ -1,7 +1,5 @@
 require('dotenv').config();
 const hashing = require('../src/hashing');
-// import { getBlockchain } from './blockchain';
-// import { Block } from '../src/Block';
 const {getMempool} = require('../src/mempool');
 const {getBlockchain} = require('../src//blockchain');
 const {coinbase, transaction} = require('../src/transaction');
@@ -24,7 +22,7 @@ export default class Miner {
         try {
             const latestBlock = getBlockchain().getLatestBlock();
 
-            if (!(latestBlock === Block)) {
+            if (!(latestBlock instanceof Block)) {
                 throw new Error("Invalid latest block");
             }
 
@@ -41,13 +39,13 @@ export default class Miner {
             filteredTxs.unshift(coinbaseInstance);
 
             while (true) {
-                const block = new block(
+                const block = new Block(
                     hashPrev,
                     filteredTxs,
                     randomNonce
                 );
 
-                const hash = block.getHashes();
+                const hash = block.getHash();
                 const check = this.checkAgainstTarget(hash);
 
                 if (check) {
