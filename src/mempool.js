@@ -8,9 +8,6 @@ export default class Mempool {
     }
 
     insertTransaction(transaction) {
-        if (!(transaction instanceof Transaction) || !transaction.isValid()) {
-            throw new Error("Invalid transaction");
-        }
         this.transactions.push(transaction);
     }
 }

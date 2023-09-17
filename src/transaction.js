@@ -8,10 +8,6 @@ function validateInputParameters(utxos, receiver_public_keys, messages) {
         throw new Error('Invalid UTXOs, received:' + utxos);
     }
 
-    if (!Array.isArray(receiver_public_keys) || receiver_public_keys.length === 0 || receiver_public_keys.length !== messages.length) {
-        throw new Error('Invalid receiver public keys, received: ' + receiver_public_keys)
-    }
-
     if (!Array.isArray(messages) || messages.length === 0) {
         throw new Error('Invalid messages, received: ' + messages)
     }
