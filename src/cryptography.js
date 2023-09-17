@@ -38,8 +38,8 @@ function generateKeyPair() {
     try {
         return crypto.generateKeyPairSync('rsa', {
             modulusLength: 8192,
-            publicKeyEncoding: { type: 'spki', format: 'pem' },
-            privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+            publicKeyEncoding: {type: 'spki', format: 'pem'},
+            privateKeyEncoding: {type: 'pkcs8', format: 'pem'},
         });
     } catch (error) {
         throw new Error(`Error while generating key pair: ${error.message}`);
@@ -55,7 +55,7 @@ function generateKeyPair() {
  */
 function loadPrivatePem(privatePem, password) {
     try {
-        return crypto.createPrivateKey({ key: privatePem, format: 'pem', type: 'pkcs8', passphrase: password });
+        return crypto.createPrivateKey({key: privatePem, format: 'pem', type: 'pkcs8', passphrase: password});
     } catch (error) {
         throw new Error(`Error while loading private key: ${error.message}`);
     }
@@ -83,7 +83,7 @@ function sign(privatePemString, password, message) {
 
 /**
  * Verifies the authenticity of a signature for a given message using a public key and the original message.
-    * @param {string} publicPemString - The PEM-encoded public key as a string.
+ * @param {string} publicPemString - The PEM-encoded public key as a string.
  * @param {string} signature - The base64-encoded signature.
  * @param {string} message - The original message.
  * @returns {boolean} True if the signature is valid, false otherwise.
